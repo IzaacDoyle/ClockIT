@@ -7,11 +7,12 @@
     tools:context=".activities.ClockActivity">
 
     <ImageButton
-        android:id="@+id/ManagerScreen"
-        android:layout_width="201dp"
-        android:layout_height="160dp"
-        android:layout_marginTop="16dp"
+        android:id="@+id/ManagerScreen_Image"
+        android:layout_width="380dp"
+        android:layout_height="197dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_manage" />
@@ -20,12 +21,13 @@
         android:id="@+id/fragment_Container"
         android:name="doyle.izaac.clockit.fragments.MainFragment"
         android:layout_width="0dp"
-        android:layout_height="465dp"
+        android:layout_height="458dp"
+        android:layout_marginTop="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ManagerScreen"
+        app:layout_constraintTop_toBottomOf="@+id/ManagerScreen_Image"
         app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

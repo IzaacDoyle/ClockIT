@@ -5,9 +5,14 @@
     <item
         android:icon="@android:drawable/ic_input_add"
         android:title="Add User"
-        android:actionLayout="@layout/button_new_user"
-        app:showAsAction="always"
+        app:showAsAction="always|withText">
 
-        />
+
+
+
+    </item>
+    <item
+        android:id="@+id/Manager_Set_Main_Image"
+        android:title="Set Home Screen Image" />
 
 </menu>

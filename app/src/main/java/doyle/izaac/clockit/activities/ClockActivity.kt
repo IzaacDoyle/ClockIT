@@ -1,6 +1,7 @@
 package doyle.izaac.clockit.activities
 
-import android.app.Activity
+import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
@@ -8,19 +9,20 @@ import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import doyle.izaac.clockit.Firebase.ManagerCheck
+import doyle.izaac.clockit.Firebase.managercheck
 import doyle.izaac.clockit.R
 import doyle.izaac.clockit.fragments.FragmentClockIn
 import doyle.izaac.clockit.fragments.FragmentClockOut
 import doyle.izaac.clockit.fragments.MainFragment
+import doyle.izaac.clockit.helpers.read
+import doyle.izaac.clockit.helpers.readImage
+import doyle.izaac.clockit.helpers.readImageFromPath
 import doyle.izaac.clockit.main.MainApp
 import doyle.izaac.clockit.models.ClockInModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_clock_in.*
-import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.android.synthetic.main.manager_screen.*
-import kotlin.math.log
+import kotlinx.android.synthetic.main.manager_screen_login.*
+import layout.ManagerActionsActivity
 
 
 class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
@@ -54,8 +56,15 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
         setContentView(R.layout.activity_main)
         app = application as MainApp
 
+        val bitmap = read(this)
+       // val DBitmap = BitmapFactor
+        Log.d("bitmapCA",bitmap)
 
-        ManagerScreen.setOnClickListener {
+
+        ManagerScreen_Image.setImageBitmap(readImageFromPath(this,bitmap))
+
+
+        ManagerScreen_Image.setOnClickListener {
             buttonClicks++
             if (buttonClicks == 1 || buttonClicks ==2 || buttonClicks == 3 || buttonClicks == 4){
                 if (timerActive== false) {
@@ -77,27 +86,31 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
                 Log.d("Clicked", "Clicked 3 times")
 
                 val mDialView =
-                        LayoutInflater.from(this).inflate(R.layout.manager_screen, null)
+                        LayoutInflater.from(this).inflate(R.layout.manager_screen_login, null)
                 val mBuilder = AlertDialog.Builder(this)
                         .setView(mDialView)
                         .setTitle("Manager Login")
                 val mAlertDialog = mBuilder.show()
-                val manager_mp = mAlertDialog.Manager_MP.text.toString()
-                val manager_mu = mAlertDialog.Manager_MU.text.toString()
+
                 mAlertDialog.manager_signIn.setOnClickListener {
-                    if (manager_mu.isBlank()){
-                        Log.d("manager" , "UserNameError $manager_mp")
-                    }else if(manager_mu.isBlank()){
-                        Log.d("manager" , "UserPasswordError $manager_mu")
+                    val manager_mp = mAlertDialog.Manager_MP.text.toString()
+                    val manager_mu = mAlertDialog.Manager_MU.text.toString()
+                    if (manager_mu.toString().isBlank()){
+                        Log.d("manager" , "UserNameError + $manager_mp")
+                    }else if(manager_mu.toString().isBlank()){
+                        Log.d("manager" , "UserPasswordError + $manager_mu")
                     }else {
                         ManagerCheck(manager_mu.toString(), manager_mp.toInt())
+                    }
+                    if (managercheck == true){
+                        val intent = Intent(applicationContext, ManagerActionsActivity::class.java)
+                        startActivity(intent)
                     }
                 }
 
 
 
-                // val intent = Intent(baseContext, ManagerScreen::class.java)
-                // startActivity(intent)
+
                 buttonClicks = 0
             }
 
