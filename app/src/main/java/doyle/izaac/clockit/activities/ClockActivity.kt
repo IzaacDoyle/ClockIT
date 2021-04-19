@@ -21,6 +21,9 @@ import doyle.izaac.clockit.helpers.readImageFromPath
 import doyle.izaac.clockit.main.MainApp
 import doyle.izaac.clockit.models.ClockInModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.fragment_clock_in.*
+import kotlinx.android.synthetic.main.fragment_clock_out.*
 import kotlinx.android.synthetic.main.manager_screen_login.*
 import layout.ManagerActionsActivity
 
@@ -63,6 +66,27 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
 
         ManagerScreen_Image.setImageBitmap(readImageFromPath(this,bitmap))
 
+       /* ClB_Button.setOnClickListener {
+
+            val username = CII_Name.text.toString()
+            val password = CII_Password.text.toString()
+
+        }
+
+
+        CIO_Button.setOnClickListener {
+
+            val username = CIO_Name.text.toString()
+            val password = CIO_Password.text.toString()
+
+        }
+
+
+        */
+
+
+
+
 
         ManagerScreen_Image.setOnClickListener {
             buttonClicks++
@@ -95,16 +119,17 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
                 mAlertDialog.manager_signIn.setOnClickListener {
                     val manager_mp = mAlertDialog.Manager_MP.text.toString()
                     val manager_mu = mAlertDialog.Manager_MU.text.toString()
-                    if (manager_mu.toString().isBlank()){
-                        Log.d("manager" , "UserNameError + $manager_mp")
-                    }else if(manager_mu.toString().isBlank()){
-                        Log.d("manager" , "UserPasswordError + $manager_mu")
-                    }else {
-                        ManagerCheck(manager_mu.toString(), manager_mp.toInt())
+                    if (manager_mu.toString().isNullOrBlank()) {
+                        Log.d("manager", "UserNameError + $manager_mp")
+                    } else if (manager_mu.toString().isNullOrBlank()) {
+                        Log.d("manager", "UserPasswordError + $manager_mu")
+                }else if(manager_mu != null && manager_mp != null){
+                        ManagerCheck(manager_mu, manager_mp.toInt())
                     }
                     if (managercheck == true){
                         val intent = Intent(applicationContext, ManagerActionsActivity::class.java)
                         startActivity(intent)
+                        mAlertDialog.cancel()
                     }
                 }
 
@@ -200,6 +225,7 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
                 } else if (kotlin.math.abs(valueY) > MIN_DISTANCE) {
                     if (y2 > y1) {
                         Log.d("Swipe", "Swipe Bottom")
+                        FragmentView(mainFragment,"Right")
                     } else {
                         Log.d("Swipe", "Swipe Top")
 
@@ -234,11 +260,6 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
 
     private fun FragmentView(fragment: Fragment, Swipe: String){
         val ft = ft.beginTransaction()
-
-
-
-
-
 
         if (Swipe=="Right"){
             ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right)

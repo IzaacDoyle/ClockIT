@@ -7,11 +7,11 @@ import doyle.izaac.clockit.models.AccountModel
 import layout.ManagerActionsActivity
 
 
-var db = FirebaseFirestore.getInstance()
+
 var managercheck : Boolean = false
 
 public fun CreateUser(account :AccountModel){
-
+    val db = FirebaseFirestore.getInstance()
 var user = hashMapOf(
         "ID" to account.ID,
         "UseerName" to account.Username.toLowerCase(),
@@ -38,6 +38,7 @@ var user = hashMapOf(
 
 
 public fun ManagerCheck(username : String, password : Int ){
+    val db = FirebaseFirestore.getInstance()
 
 managercheck = true
 

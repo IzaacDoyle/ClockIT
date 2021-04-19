@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.Spinner
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import doyle.izaac.clockit.R
@@ -24,12 +26,24 @@ class ManagerActionsActivity: AppCompatActivity() {
     val IMAGE_REQUEST = 1
 
 
+
+
     var accounts = AccountModel()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.manager_main)
+        val roleSelect = resources.getStringArray(R.array.RoleSelect)
+
+
+
+            val spinner = findViewById<Spinner>(R.id.New_ScrollSelectRole)
+            if (spinner != null) {
+                val adaptor = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, roleSelect)
+                spinner.adapter = adaptor
+            }
+
 
 
     }
@@ -46,6 +60,9 @@ class ManagerActionsActivity: AppCompatActivity() {
     when(item.itemId){
         R.id.Manager_Set_Main_Image -> {
             showImagePicker(this, IMAGE_REQUEST)
+        }
+        R.id.AddUser -> {
+          setContentView(R.layout.new_user_create)
 
         }
 
@@ -58,11 +75,10 @@ class ManagerActionsActivity: AppCompatActivity() {
         when (requestCode){
             IMAGE_REQUEST -> {
                 if (data != null){
-                  val imagebit:Bitmap? =   readImage(this,resultCode,data)
-                        Log.d("ImageBitmap", data.toString())
-                    SaveImage(this,readImage(this,resultCode,data)!!)
 
-                    readImage(this,resultCode,data)
+                    SaveImage(this, data.data.toString())
+
+                   // readImage(this,resultCode,data)
                 }
             }
         }

@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import java.io.IOException
 
 fun showImagePicker(parent: Activity, id: Int) {
@@ -50,6 +51,7 @@ fun readImageFromPath(context: Context, path : String) : Bitmap? {
             bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor)
             parcelFileDescriptor?.close()
         } catch (e: Exception) {
+            Toast.makeText(context,"Image Save is unavalble please re-set image",Toast.LENGTH_SHORT).show()
         }
     }
     Log.d("RIp", bitmap.toString())

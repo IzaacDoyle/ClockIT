@@ -8,7 +8,7 @@ import java.io.*
 
 val file:String = "HomeImage"
 
-fun SaveImage(context: Context,ImageBitmap: Bitmap){
+fun SaveImage(context: Context,ImageBitmap :String){
 
 
     val data = ImageBitmap.toString()
@@ -31,7 +31,7 @@ fun read(context: Context): String {
             val partialStr = StringBuilder()
             var done = false
             while (!done) {
-                var line = bufferedReader.readLine()
+                val line = bufferedReader.readLine()
                 done = (line == null);
                 if (line != null) partialStr.append(line);
             }
