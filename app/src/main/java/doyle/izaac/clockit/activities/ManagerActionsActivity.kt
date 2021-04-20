@@ -1,25 +1,23 @@
-package layout
+package doyle.izaac.clockit.activities
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.Spinner
-import androidx.appcompat.app.ActionBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import doyle.izaac.clockit.Firebase.CreateUser
 import doyle.izaac.clockit.R
 import doyle.izaac.clockit.helpers.SaveImage
-import doyle.izaac.clockit.helpers.readImage
-import doyle.izaac.clockit.helpers.readImageFromPath
 import doyle.izaac.clockit.helpers.showImagePicker
 import doyle.izaac.clockit.main.MainApp
 import doyle.izaac.clockit.models.AccountModel
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.new_user_create.*
+import org.jetbrains.anko.toast
 
 class ManagerActionsActivity: AppCompatActivity() {
     lateinit var app: MainApp
@@ -31,19 +29,39 @@ class ManagerActionsActivity: AppCompatActivity() {
     var accounts = AccountModel()
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.manager_main)
-        val roleSelect = resources.getStringArray(R.array.RoleSelect)
 
 
 
-            val spinner = findViewById<Spinner>(R.id.New_ScrollSelectRole)
-            if (spinner != null) {
-                val adaptor = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, roleSelect)
-                spinner.adapter = adaptor
+
+
+
+
+
+
+
+
+
+            /*
+            if (New_Username != null){
+                if (New_Staff_Num != null){
+
+
+                   app.account.Create(a)
+                }else{
+                    Toast.makeText(this,"Please Enter Staff number",Toast.LENGTH_SHORT).show()
+                }
+            }else{
+                Toast.makeText(this,"Please Enter Username",Toast.LENGTH_SHORT).show()
             }
 
+
+        }
+
+             */
 
 
     }
@@ -62,8 +80,8 @@ class ManagerActionsActivity: AppCompatActivity() {
             showImagePicker(this, IMAGE_REQUEST)
         }
         R.id.AddUser -> {
-          setContentView(R.layout.new_user_create)
-
+            val Intent = Intent(this,CreateNewUser::class.java)
+            startActivity(Intent)
         }
 
     }
@@ -83,6 +101,8 @@ class ManagerActionsActivity: AppCompatActivity() {
             }
         }
     }
+
+
 
 
 

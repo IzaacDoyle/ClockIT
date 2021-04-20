@@ -1,5 +1,7 @@
 package doyle.izaac.clockit.models
 
+import doyle.izaac.clockit.Firebase.CreateUser
+
 class AccountMemStore: AccountStore {
     val Accounts = ArrayList<AccountModel>()
 
@@ -10,8 +12,9 @@ class AccountMemStore: AccountStore {
 
 
     override fun Create(account: AccountModel) {
-
         Accounts.add(account)
+
+
     }
 
     override fun Delete() {

@@ -6,6 +6,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string-array name="RoleSelect">
+        <item>Select Staff Role</item>
         <item >Floor Staff</item>
         <item>Kitchen Staff</item>
         <item>Supervisor</item>

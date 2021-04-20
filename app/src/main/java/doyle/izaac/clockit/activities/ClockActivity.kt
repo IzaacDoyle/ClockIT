@@ -1,7 +1,6 @@
 package doyle.izaac.clockit.activities
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
@@ -16,16 +15,11 @@ import doyle.izaac.clockit.fragments.FragmentClockIn
 import doyle.izaac.clockit.fragments.FragmentClockOut
 import doyle.izaac.clockit.fragments.MainFragment
 import doyle.izaac.clockit.helpers.read
-import doyle.izaac.clockit.helpers.readImage
 import doyle.izaac.clockit.helpers.readImageFromPath
 import doyle.izaac.clockit.main.MainApp
 import doyle.izaac.clockit.models.ClockInModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
-import kotlinx.android.synthetic.main.fragment_clock_in.*
-import kotlinx.android.synthetic.main.fragment_clock_out.*
 import kotlinx.android.synthetic.main.manager_screen_login.*
-import layout.ManagerActionsActivity
 
 
 class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
