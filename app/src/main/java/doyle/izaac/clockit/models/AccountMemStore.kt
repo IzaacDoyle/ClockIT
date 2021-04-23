@@ -1,6 +1,8 @@
 package doyle.izaac.clockit.models
 
+import android.util.Log
 import doyle.izaac.clockit.Firebase.CreateUser
+import org.jetbrains.anko.info
 
 class AccountMemStore: AccountStore {
     val Accounts = ArrayList<AccountModel>()
@@ -13,8 +15,7 @@ class AccountMemStore: AccountStore {
 
     override fun Create(account: AccountModel) {
         Accounts.add(account)
-
-
+        logAll()
     }
 
     override fun Delete() {
@@ -23,5 +24,8 @@ class AccountMemStore: AccountStore {
 
     override fun Save(account: AccountModel) {
         TODO("Not yet implemented")
+    }
+    fun logAll() {
+        Accounts.forEach { Log.d("accounts","${it}") }
     }
 }

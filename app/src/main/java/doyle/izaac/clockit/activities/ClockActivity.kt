@@ -5,24 +5,33 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.*
+import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import com.google.firebase.firestore.auth.User
 import doyle.izaac.clockit.Firebase.ManagerCheck
 import doyle.izaac.clockit.Firebase.managercheck
 import doyle.izaac.clockit.R
 import doyle.izaac.clockit.fragments.FragmentClockIn
 import doyle.izaac.clockit.fragments.FragmentClockOut
 import doyle.izaac.clockit.fragments.MainFragment
-import doyle.izaac.clockit.helpers.read
+import doyle.izaac.clockit.helpers.Communicator
+
+import doyle.izaac.clockit.helpers.readImage
 import doyle.izaac.clockit.helpers.readImageFromPath
 import doyle.izaac.clockit.main.MainApp
 import doyle.izaac.clockit.models.ClockInModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_clock_in.*
+import kotlinx.android.synthetic.main.fragment_clock_out.*
 import kotlinx.android.synthetic.main.manager_screen_login.*
+import org.jetbrains.anko.find
 
 
-class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
+class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Communicator
+ {
     lateinit var app: MainApp
     var clockin = ClockInModel()
     val mainFragment = MainFragment()
@@ -31,6 +40,8 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
     val ft = supportFragmentManager
     var buttonClicks = 0
     var timerActive: Boolean = false
+
+
 
 
   lateinit var gestureDetector: GestureDetector
@@ -53,32 +64,12 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
         setContentView(R.layout.activity_main)
         app = application as MainApp
 
-        val bitmap = read(this)
+        val bitmap = readImage(this, "HomeImage")
        // val DBitmap = BitmapFactor
         Log.d("bitmapCA",bitmap)
 
 
         ManagerScreen_Image.setImageBitmap(readImageFromPath(this,bitmap))
-
-       /* ClB_Button.setOnClickListener {
-
-            val username = CII_Name.text.toString()
-            val password = CII_Password.text.toString()
-
-        }
-
-
-        CIO_Button.setOnClickListener {
-
-            val username = CIO_Name.text.toString()
-            val password = CIO_Password.text.toString()
-
-        }
-
-
-        */
-
-
 
 
 
@@ -111,13 +102,13 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
                 val mAlertDialog = mBuilder.show()
 
                 mAlertDialog.manager_signIn.setOnClickListener {
-                    val manager_mp = mAlertDialog.Manager_MP.text.toString()
+                    val manager_mp = mAlertDialog.Manager_MP.text.toString().toInt()
                     val manager_mu = mAlertDialog.Manager_MU.text.toString()
-                    if (manager_mu.toString().isNullOrBlank()) {
+                    if (manager_mu.toString().isBlank()) {
                         Log.d("manager", "UserNameError + $manager_mp")
-                    } else if (manager_mu.toString().isNullOrBlank()) {
+                    } else if (manager_mu.toString().isBlank()) {
                         Log.d("manager", "UserPasswordError + $manager_mu")
-                }else if(manager_mu != null && manager_mp != null){
+                }else {
                         ManagerCheck(manager_mu, manager_mp.toInt())
                     }
                     if (managercheck == true){
@@ -137,11 +128,6 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
 
         }
 
-
-
-
-
-
     gestureDetector = GestureDetector(this,this)
         ft.addOnBackStackChangedListener {
 
@@ -151,9 +137,6 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
 
 
     }
-
-
-
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
@@ -265,6 +248,25 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener {
 
         ft.replace(R.id.fragment_Container, fragment).commit()
     }
+
+
+
+
+    override fun passDataCom(Username: String) {
+        val bundle = Bundle()
+        bundle.putString("Username",Username)
+
+        val transaction = this.supportFragmentManager.beginTransaction()
+        mainFragment.arguments = bundle
+
+        transaction.setCustomAnimations(R.anim.slide_in_up,R.anim.slide_out_left)
+        transaction.replace(R.id.fragment_Container, mainFragment)
+        transaction.commit()
+
+        }
+
+
+
 
 
 

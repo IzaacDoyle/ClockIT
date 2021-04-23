@@ -4,20 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import doyle.izaac.clockit.Firebase.CreateUser
+import androidx.core.view.isEmpty
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.GridLayoutManager
 import doyle.izaac.clockit.R
-import doyle.izaac.clockit.helpers.SaveImage
+import doyle.izaac.clockit.ViewModel.AccountViewModel
+import doyle.izaac.clockit.helpers.AccountRecycleAdaptor
+
+import doyle.izaac.clockit.helpers.SaveImageLocally
 import doyle.izaac.clockit.helpers.showImagePicker
 import doyle.izaac.clockit.main.MainApp
 import doyle.izaac.clockit.models.AccountModel
-import kotlinx.android.synthetic.main.new_user_create.*
-import org.jetbrains.anko.toast
+import kotlinx.android.synthetic.main.manager_main.*
 
 class ManagerActionsActivity: AppCompatActivity() {
     lateinit var app: MainApp
@@ -26,7 +27,10 @@ class ManagerActionsActivity: AppCompatActivity() {
 
 
 
+
     var accounts = AccountModel()
+    private lateinit var viewModel: AccountViewModel
+    lateinit var search : MenuItem
 
 
 
@@ -36,32 +40,62 @@ class ManagerActionsActivity: AppCompatActivity() {
 
 
 
+        viewModel = ViewModelProviders.of(this).get(AccountViewModel::class.java)
+        viewModel.account.observe(this, { it ->
+
+            val myAdaptor = AccountRecycleAdaptor(it,applicationContext)
+          //  Account_Recycle_View.layoutManager = LinearLayoutManager(applicationContext)
+            Account_Recycle_View.layoutManager = GridLayoutManager(applicationContext , 2)
+            Account_Recycle_View.adapter = myAdaptor
+           // Account_Recycle_View.adapter!!.notifyDataSetChanged()
+
+            val searchview = search.actionView as SearchView
+            searchview.queryHint = "Search Accounts"
 
 
+            searchview.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    if(searchview.isEmpty()){
+                        viewModel.getProducts()
+                    }else{
+                        if (query.isNullOrBlank()){
+                            Toast.makeText(
+                                    applicationContext,
+                                    "Error With Search",
+                                    Toast.LENGTH_SHORT
+                            ).show()
+                            viewModel.getProducts()
+                        }else{
+                            viewModel.SearchProductsName(query.toLowerCase(),"Username","WOP")
 
-
-
-
-
-
-
-            /*
-            if (New_Username != null){
-                if (New_Staff_Num != null){
-
-
-                   app.account.Create(a)
-                }else{
-                    Toast.makeText(this,"Please Enter Staff number",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    return true
                 }
-            }else{
-                Toast.makeText(this,"Please Enter Username",Toast.LENGTH_SHORT).show()
-            }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    if (searchview.isEmpty()){
+                        viewModel.getProducts()
+                    }else{
+                        if (newText.isNullOrBlank()){
+                            viewModel.getProducts()
+                        }else{
+                            viewModel.SearchProductsName(newText.toLowerCase(),"Username","WOP")
+                        }
+                    }
+                    return true
+                }
+
+            })
+
+        }  )
+
+        // TODO Add to Menu so Search account Selection for WOP, WP, Manager
 
 
-        }
 
-             */
+
+
 
 
     }
@@ -70,7 +104,14 @@ class ManagerActionsActivity: AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.menu_manager, menu)
+
+        search = menu?.findItem(R.id.accounts_search)!!
+
+
         return true
+
+
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -94,7 +135,7 @@ class ManagerActionsActivity: AppCompatActivity() {
             IMAGE_REQUEST -> {
                 if (data != null){
 
-                    SaveImage(this, data.data.toString())
+                    SaveImageLocally(this, data.data.toString(),"HomeImage")
 
                    // readImage(this,resultCode,data)
                 }

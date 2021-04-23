@@ -7,7 +7,7 @@
 
     <string-array name="RoleSelect">
         <item>Select Staff Role</item>
-        <item >Floor Staff</item>
+        <item>Floor Staff</item>
         <item>Kitchen Staff</item>
         <item>Supervisor</item>
         <item>Manager</item>

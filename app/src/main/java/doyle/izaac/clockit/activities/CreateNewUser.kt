@@ -10,12 +10,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import doyle.izaac.clockit.Firebase.CreateUser
 import doyle.izaac.clockit.R
+import doyle.izaac.clockit.main.MainApp
 import doyle.izaac.clockit.models.AccountModel
 import kotlinx.android.synthetic.main.new_user_create.*
 import org.jetbrains.anko.toast
 
 class CreateNewUser: AppCompatActivity() {
     var accounts = AccountModel()
+    lateinit var app: MainApp
     var spinnerText : String = ""
 
 
@@ -56,7 +58,7 @@ class CreateNewUser: AppCompatActivity() {
             accounts.Username = New_Username.text.toString()
             accounts.Password = New_Staff_Num.text.toString().toInt()
             accounts.Role = spinnerText.toString()
-            accounts.Pay = New_Pay.text.toString().toLong()
+            accounts.Pay = New_Pay.text.toString().toDouble()
             if (accounts.Username.isBlank()) {
                 toast("Please Enter Username")
             } else if (accounts.Password.toString().isBlank()) {
@@ -64,7 +66,8 @@ class CreateNewUser: AppCompatActivity() {
             } else if (accounts.Role.isBlank()) {
                 toast("Please Select staff Role ${accounts.Role}")
             } else if (accounts.Pay.toString().isBlank()) {
-                accounts.Pay = 0
+                accounts.Pay = 0.0
+                app.account.Create(accounts.copy())
                 CreateUser(
                     context,
                     accounts.Username,

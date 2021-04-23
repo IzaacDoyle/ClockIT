@@ -1,4 +1,5 @@
 package doyle.izaac.clockit.models
 
-data class ClockInModel(var StaffId: String ="", var ClockInTime: Long = 0L, var ClockOutTime: Long = 0L)
-
+data class ClockInModel(val Username:String ="", val clocked:Boolean =false){
+    // constructor(): this("",false)
+}
