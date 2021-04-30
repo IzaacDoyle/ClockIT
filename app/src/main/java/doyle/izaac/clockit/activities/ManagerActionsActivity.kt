@@ -1,5 +1,6 @@
 package doyle.izaac.clockit.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -9,51 +10,61 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isEmpty
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
 import doyle.izaac.clockit.R
 import doyle.izaac.clockit.ViewModel.AccountViewModel
 import doyle.izaac.clockit.helpers.AccountRecycleAdaptor
+import doyle.izaac.clockit.helpers.SaveDataLocally
 
-import doyle.izaac.clockit.helpers.SaveImageLocally
+
 import doyle.izaac.clockit.helpers.showImagePicker
 import doyle.izaac.clockit.main.MainApp
 import doyle.izaac.clockit.models.AccountModel
 import kotlinx.android.synthetic.main.manager_main.*
+import org.jetbrains.anko.intentFor
 
 class ManagerActionsActivity: AppCompatActivity() {
+
     lateinit var app: MainApp
-    val IMAGE_REQUEST = 1
-
-
-
+    private val IMAGE_REQUEST = 1
+    private val CREATE_USER_REQUEST = 2
+    private lateinit var search : MenuItem
 
 
     var accounts = AccountModel()
     private lateinit var viewModel: AccountViewModel
-    lateinit var search : MenuItem
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.manager_main)
+        app = application as MainApp
+
+
+
+
 
 
 
         viewModel = ViewModelProviders.of(this).get(AccountViewModel::class.java)
         viewModel.account.observe(this, { it ->
 
+           val  searchview = search.actionView as SearchView?
+            if (searchview != null) {
+                searchview.queryHint = "Search Accounts"
+            }
+
+
             val myAdaptor = AccountRecycleAdaptor(it,applicationContext)
           //  Account_Recycle_View.layoutManager = LinearLayoutManager(applicationContext)
             Account_Recycle_View.layoutManager = GridLayoutManager(applicationContext , 2)
             Account_Recycle_View.adapter = myAdaptor
-           // Account_Recycle_View.adapter!!.notifyDataSetChanged()
-
-            val searchview = search.actionView as SearchView
-            searchview.queryHint = "Search Accounts"
+            Account_Recycle_View.adapter!!.notifyDataSetChanged()
 
 
-            searchview.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+
+
+            searchview!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     if(searchview.isEmpty()){
                         viewModel.getProducts()
@@ -102,6 +113,7 @@ class ManagerActionsActivity: AppCompatActivity() {
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.menu_manager, menu)
 
@@ -121,8 +133,12 @@ class ManagerActionsActivity: AppCompatActivity() {
             showImagePicker(this, IMAGE_REQUEST)
         }
         R.id.AddUser -> {
-            val Intent = Intent(this,CreateNewUser::class.java)
-            startActivity(Intent)
+            startActivityForResult(intentFor<CreateNewUser>(),CREATE_USER_REQUEST)
+            finish()
+
+        }
+        R.id.Manager_Email_Data -> {
+
         }
 
     }
@@ -134,13 +150,23 @@ class ManagerActionsActivity: AppCompatActivity() {
         when (requestCode){
             IMAGE_REQUEST -> {
                 if (data != null){
+                    SaveDataLocally(this, data.data.toString(),"HomeImage")
 
-                    SaveImageLocally(this, data.data.toString(),"HomeImage")
-
-                   // readImage(this,resultCode,data)
                 }
             }
         }
+    }
+
+    override fun onBackPressed() {
+        val resultIntent = Intent()
+        setResult(Activity.RESULT_OK)
+        finishActivity(RESULT_OK)
+        
+        super.onBackPressed()
+
+
+      // val intent = Intent(this,ClockActivity::class.java)
+       // startActivity(intent)
     }
 
 

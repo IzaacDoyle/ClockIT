@@ -1,11 +1,12 @@
 package doyle.izaac.clockit.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import doyle.izaac.clockit.Firebase.checkAccounts
+
 import doyle.izaac.clockit.R
 import doyle.izaac.clockit.helpers.Communicator
 import kotlinx.android.synthetic.main.fragment_clock_in.*
@@ -32,15 +33,17 @@ class FragmentClockIn : Fragment() {
             val password = CII_Password.text.toString().toInt()
             if (username.isNotEmpty()){
                 if (username.isNotEmpty()){
-                    if (checkAccounts(username,password) ==true){
-                        communicator.passDataCom(username)
-                        
+                    communicator.passDataCom(username,password)
+
+                        }
+                     //   communicator.passDataCom(username)
+
                     }
                 }
 
-            }
 
-        }
+
+
 
 
         return view

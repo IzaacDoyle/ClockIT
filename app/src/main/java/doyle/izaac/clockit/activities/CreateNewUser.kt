@@ -1,5 +1,7 @@
 package doyle.izaac.clockit.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,17 +15,21 @@ import doyle.izaac.clockit.R
 import doyle.izaac.clockit.main.MainApp
 import doyle.izaac.clockit.models.AccountModel
 import kotlinx.android.synthetic.main.new_user_create.*
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 
 class CreateNewUser: AppCompatActivity() {
     var accounts = AccountModel()
     lateinit var app: MainApp
     var spinnerText : String = ""
+    val MANGER_RESULT = 3
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.new_user_create)
+
+        app = application as MainApp
 
         val roleSelect = resources.getStringArray(R.array.RoleSelect)
         val spinner = findViewById<Spinner>(R.id.New_ScrollSelectRole)
@@ -67,25 +73,25 @@ class CreateNewUser: AppCompatActivity() {
                 toast("Please Select staff Role ${accounts.Role}")
             } else if (accounts.Pay.toString().isBlank()) {
                 accounts.Pay = 0.0
-                app.account.Create(accounts.copy())
-                CreateUser(
-                    context,
-                    accounts.Username,
-                    accounts.Password,
-                    accounts.Pay,
-                    accounts.Role
-                )
+                app.account.Create(applicationContext,accounts.copy())
+
+                startActivityForResult(intentFor<ManagerActionsActivity>(),MANGER_RESULT)
+
+            //    val intent = Intent(this, ManagerActionsActivity::class.java)
+              //  startActivity(intent)
+
             } else {
-                CreateUser(
-                    context,
-                    accounts.Username,
-                    accounts.Password,
-                    accounts.Pay,
-                    accounts.Role
-                )
+                app.account.Create(applicationContext,accounts.copy())
+                startActivityForResult(intentFor<ManagerActionsActivity>(),MANGER_RESULT)
             }
         }
 
+    }
+
+    override fun onBackPressed() {
+        startActivityForResult(intentFor<ManagerActionsActivity>(),MANGER_RESULT)
+        finish()
+        super.onBackPressed()
     }
 
 

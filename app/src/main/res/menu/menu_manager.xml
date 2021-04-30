@@ -21,6 +21,9 @@
 
     </item>
     <item
+        android:id="@+id/Manager_Email_Data"
+        android:title="Email Clock Data" />
+    <item
         android:id="@+id/Manager_Set_Main_Image"
         android:title="Set Home Screen Image" />
 

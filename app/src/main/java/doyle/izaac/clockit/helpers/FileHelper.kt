@@ -8,7 +8,7 @@ import java.io.*
 
 
 
-fun SaveImageLocally(context: Context,ImageBitmap :String, FileName: String){
+fun SaveDataLocally(context: Context,ImageBitmap :String, FileName: String){
 
 
     val data = ImageBitmap.toString()
@@ -23,7 +23,9 @@ fun SaveImageLocally(context: Context,ImageBitmap :String, FileName: String){
 }
 
 
-fun readImage(context: Context, FileName: String): String {
+
+
+fun readDataLocally(context: Context, FileName: String): String {
     var str = ""
     try {
         val inputStream = context.openFileInput(FileName)

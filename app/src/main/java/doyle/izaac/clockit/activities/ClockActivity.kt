@@ -1,5 +1,6 @@
 package doyle.izaac.clockit.activities
 
+import android.app.ActivityManager
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -18,16 +19,19 @@ import doyle.izaac.clockit.fragments.FragmentClockIn
 import doyle.izaac.clockit.fragments.FragmentClockOut
 import doyle.izaac.clockit.fragments.MainFragment
 import doyle.izaac.clockit.helpers.Communicator
+import doyle.izaac.clockit.helpers.readDataLocally
 
 import doyle.izaac.clockit.helpers.readImage
 import doyle.izaac.clockit.helpers.readImageFromPath
 import doyle.izaac.clockit.main.MainApp
 import doyle.izaac.clockit.models.ClockInModel
+import doyle.izaac.clockit.models.ClockedAccounts
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_clock_in.*
 import kotlinx.android.synthetic.main.fragment_clock_out.*
 import kotlinx.android.synthetic.main.manager_screen_login.*
 import org.jetbrains.anko.find
+import org.jetbrains.anko.intentFor
 
 
 class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Communicator
@@ -39,6 +43,8 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
     val FragmentClockOut = FragmentClockOut()
     val ft = supportFragmentManager
     var buttonClicks = 0
+     val MANGER_RESULT = 3
+
     var timerActive: Boolean = false
 
 
@@ -61,11 +67,11 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
         if (savedInstanceState != null){
             ft.beginTransaction().replace(R.id.fragment_Container, mainFragment,"Main").commit()
         }
+
         setContentView(R.layout.activity_main)
         app = application as MainApp
 
-        val bitmap = readImage(this, "HomeImage")
-       // val DBitmap = BitmapFactor
+        val bitmap = readDataLocally(this, "HomeImage")
         Log.d("bitmapCA",bitmap)
 
 
@@ -102,6 +108,9 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
                 val mAlertDialog = mBuilder.show()
 
                 mAlertDialog.manager_signIn.setOnClickListener {
+
+                    //fix Manager Login
+
                     val manager_mp = mAlertDialog.Manager_MP.text.toString().toInt()
                     val manager_mu = mAlertDialog.Manager_MU.text.toString()
                     if (manager_mu.toString().isBlank()) {
@@ -112,8 +121,7 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
                         ManagerCheck(manager_mu, manager_mp.toInt())
                     }
                     if (managercheck == true){
-                        val intent = Intent(applicationContext, ManagerActionsActivity::class.java)
-                        startActivity(intent)
+                        startActivityForResult(intentFor<ManagerActionsActivity>(),MANGER_RESULT)
                         mAlertDialog.cancel()
                     }
                 }
@@ -162,24 +170,6 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
                         FragmentView(FragClockIn,"Right")
 
-
-
-
-
-
-                        /*ClockInSwipeIM.animate().apply {
-
-                           duration = 1000
-                            rotationYBy(360f)
-
-
-
-                        }.withEndAction {
-                            ClockInSwipeIM.rotationY = 0f
-
-                        }
-
-                         */
                     } else {
 
 
@@ -187,15 +177,6 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
                         FragmentView(FragmentClockOut,"Left")
 
-
-                      /*  ClockInSwipeIM.animate().apply {
-                            duration = 1000
-                            rotationYBy(-360f)
-                        }.withEndAction {
-                            ClockInSwipeIM.rotationY = 0f
-                        }
-
-                       */
                     }
 
 
@@ -252,9 +233,15 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
 
 
-    override fun passDataCom(Username: String) {
+    override fun passDataCom(Username: String,Password:Int) {
+
+
         val bundle = Bundle()
+
         bundle.putString("Username",Username)
+        bundle.putInt("Password",Password)
+
+
 
         val transaction = this.supportFragmentManager.beginTransaction()
         mainFragment.arguments = bundle

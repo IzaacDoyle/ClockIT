@@ -1,6 +1,8 @@
 package doyle.izaac.clockit.ViewModel
 
 import android.util.Log
+import android.view.MenuItem
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
@@ -8,14 +10,16 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings
 import doyle.izaac.clockit.models.AccountModel
 
 class AccountViewModel : ViewModel() {
-    private lateinit var firestore: FirebaseFirestore
+
+    private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private var accounts: MutableLiveData<ArrayList<AccountModel>> = MutableLiveData<ArrayList<AccountModel>>()
 
 
 
+
     init {
-        firestore = FirebaseFirestore.getInstance()
         firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
+
         getProducts()
 
     }
@@ -87,17 +91,20 @@ class AccountViewModel : ViewModel() {
 
 
     fun SearchProductsName(Username:String, Field:String, Listfrom: String) {
+        var allAccounts :ArrayList<AccountModel> = ArrayList<AccountModel>()
+
+
         firestore.collection("Accounts/Users/$Listfrom").orderBy(Field)
                 .startAt(Username).endAt("$Username\uf8ff")
                 .get()
                 .addOnSuccessListener { snapshot ->
                     val searchAccount = ArrayList<AccountModel>()
-                    Log.d("Here","1")
+                    Log.d("Here", "1")
                     if (snapshot != null) {
-                        Log.d("Here","2")
+                        Log.d("Here", "2")
                         val documents = snapshot.documents
                         documents.forEach {
-                            Log.d("AccountSearch",it.toString())
+                            Log.d("AccountSearch", it.toString())
                             val sproducts = it.toObject(AccountModel::class.java)
                             if (sproducts != null) {
                                 searchAccount.add(sproducts)
@@ -109,28 +116,33 @@ class AccountViewModel : ViewModel() {
                     } else {
                         Log.d("ErrorSearchsProd", "$snapshot")
                     }
+                   // allAccounts.add(AccountModel(searchAccount.toString()))
+                    //allAccounts.add()
                     accounts.value = searchAccount
 
-                 //   Log.d("Search", searchAccount.toString())
-                  //  Log.d("Search2", accounts.value.toString())
+                    //   Log.d("Search", searchAccount.toString())
+                    //  Log.d("Search2", accounts.value.toString())
 
                     if (Username.isEmpty() || Username.isNullOrBlank()) {
                         getProducts()
 
                     }
+
+
                 }
-        /*
+
+
         firestore.collection("Accounts/Users/WP").orderBy(Field)
                 .startAt(Username).endAt("$Username\uf8ff")
                 .get()
                 .addOnSuccessListener { snapshot ->
                     val searchAccount = ArrayList<AccountModel>()
-                    Log.d("Here","1")
+                    Log.d("Here", "1")
                     if (snapshot != null) {
-                        Log.d("Here","2")
+                        Log.d("Here", "2")
                         val documents = snapshot.documents
                         documents.forEach {
-                            Log.d("AccountSearch",it.toString())
+                            Log.d("AccountSearch", it.toString())
                             val sproducts = it.toObject(AccountModel::class.java)
                             if (sproducts != null) {
                                 searchAccount.add(sproducts!!)
@@ -142,6 +154,7 @@ class AccountViewModel : ViewModel() {
                     } else {
                         Log.d("ErrorSearchsProd", "$snapshot")
                     }
+                   // allAccounts.add(AccountModel(searchAccount.toString()))
                     accounts.value = searchAccount
                     //   Log.d("Search", searchAccount.toString())
                     //  Log.d("Search2", accounts.value.toString())
@@ -151,17 +164,17 @@ class AccountViewModel : ViewModel() {
 
                     }
                 }
-       firestore.collection("Accounts/Users/Manager").orderBy(Field)
+        firestore.collection("Accounts/Users/Manager").orderBy(Field)
                 .startAt(Username).endAt("$Username\uf8ff")
                 .get()
                 .addOnSuccessListener { snapshot ->
                     val searchAccount = ArrayList<AccountModel>()
-                    Log.d("Here","1")
+                    Log.d("Here", "1")
                     if (snapshot != null) {
-                        Log.d("Here","2")
+                        Log.d("Here", "2")
                         val documents = snapshot.documents
                         documents.forEach {
-                            Log.d("AccountSearch",it.toString())
+                            Log.d("AccountSearch", it.toString())
                             val sproducts = it.toObject(AccountModel::class.java)
                             if (sproducts != null) {
                                 searchAccount.add(sproducts!!)
@@ -173,7 +186,9 @@ class AccountViewModel : ViewModel() {
                     } else {
                         Log.d("ErrorSearchsProd", "$snapshot")
                     }
-                    accounts.value = searchAccount
+                  //  allAccounts.add(AccountModel(searchAccount.toString()))
+
+                    // accounts.value = searchAccount
                     //   Log.d("Search", searchAccount.toString())
                     //  Log.d("Search2", accounts.value.toString())
 
@@ -182,10 +197,12 @@ class AccountViewModel : ViewModel() {
 
                     }
                 }
-
-      */
+       // accounts.value = allAccounts
+        Log.d("Accounts", allAccounts.toString())
 
     }
+
+
 
 
 
@@ -195,5 +212,7 @@ class AccountViewModel : ViewModel() {
         get() {return  accounts }
         set(value){ accounts = value}
 }
+
+
 
 
