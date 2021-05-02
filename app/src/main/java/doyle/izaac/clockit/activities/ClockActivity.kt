@@ -111,19 +111,20 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
                     //fix Manager Login
 
-                    val manager_mp = mAlertDialog.Manager_MP.text.toString().toInt()
+                    val manager_mp = mAlertDialog.Manager_MP.text.toString()
                     val manager_mu = mAlertDialog.Manager_MU.text.toString()
+
                     if (manager_mu.toString().isBlank()) {
                         Log.d("manager", "UserNameError + $manager_mp")
                     } else if (manager_mu.toString().isBlank()) {
                         Log.d("manager", "UserPasswordError + $manager_mu")
                 }else {
-                        ManagerCheck(manager_mu, manager_mp.toInt())
+                        if (ManagerCheck(manager_mu, manager_mp.toInt())){
+                            startActivityForResult(intentFor<ManagerActionsActivity>(),MANGER_RESULT)
+                            mAlertDialog.cancel()
+                        }
                     }
-                    if (managercheck == true){
-                        startActivityForResult(intentFor<ManagerActionsActivity>(),MANGER_RESULT)
-                        mAlertDialog.cancel()
-                    }
+
                 }
 
 

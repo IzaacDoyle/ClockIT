@@ -14,22 +14,38 @@ import kotlin.coroutines.coroutineContext
 
 
 var managercheck : Boolean = false
+private val db = FirebaseFirestore.getInstance()
 
 fun CreateUser(context: Context, Username: String, Password : Int,Pay : Double,Role: String):Boolean {
-    val db = FirebaseFirestore.getInstance()
-    var exists :Boolean = false
+
+    var exists: Boolean = false
 
     var user = hashMapOf(
 
-        "Username" to Username.toLowerCase(),
-        "Password" to Password,
-        "Role" to Role,
-        "Pay" to Pay
+            "Username" to Username.toLowerCase(),
+            "Password" to Password,
+            "Role" to Role,
+            "Pay" to Pay
 
     )
 
-   if (!checkAccounts(Username,Password)) {
+    if (!checkAccounts(Username, Password)) {
+        db.collection("Accounts/Users/Staff").document(Password.toString()).set(user)
+                .addOnSuccessListener {
+                    Log.d(
+                            "created account ",
+                            "Account created with name of ${Username}"
+                    )
+                }
 
+    }else{
+        exists = true
+    }
+    return exists
+    }
+
+
+/*
 
        if (Role == "Manager") {
 
@@ -77,12 +93,12 @@ fun CreateUser(context: Context, Username: String, Password : Int,Pay : Double,R
        exists = true
    }
     return exists
-}
+
+
+ */
 
 fun UpdateAccount(Username: String, Password : Int,Pay : Double,Role: String):Boolean{
-    val db = FirebaseFirestore.getInstance()
-    val account = db.collection("Accounts/Users/Manager").document(Password.toString())
-    Log.d("accountsSingle",account.toString())
+
     var isSuccess : Boolean = false
 
     val map = mutableMapOf<String, Any>()
@@ -95,7 +111,7 @@ fun UpdateAccount(Username: String, Password : Int,Pay : Double,Role: String):Bo
     }
     if (Role.isNotEmpty()){
 
-        map["Role"] = "Manager"
+        map["Role"] = Role
     }
     if (Pay.toString().isNotEmpty()){
         map["Pay"] = Pay
@@ -103,71 +119,69 @@ fun UpdateAccount(Username: String, Password : Int,Pay : Double,Role: String):Bo
     Log.d("Map", map.toString())
 
 
-
-        db.collection("Accounts/Users/Manager").document(Password.toString()).set(map).addOnSuccessListener {
-       // account.delete()
-      isSuccess = true
-    }
+    db.collection("Accounts/Users/Staff").document(Password.toString()).set(map)
+        .addOnSuccessListener {
+            // account.delete()
+            isSuccess = true
+        }
 
     return isSuccess
 
 }
 
-fun DeleteUser(Username: String, Password : Int,Pay : Double,Role: String):Boolean{
-    val db = FirebaseFirestore.getInstance()
-    val account = db.collection("Accounts/Users/Manager").document(Password.toString())
-    Log.d("accountsSingle",account.toString())
+fun DeleteUser(Username: String, Password : Int):Boolean{
     var isSuccess : Boolean = false
-
-    account.delete().addOnSuccessListener {
-        isSuccess = true
+   db.collection("Accounts/Users/Staff").document(Password.toString())
+           .delete()
+            .addOnSuccessListener {
+                isSuccess = true
     }
+
+    Log.d("accountsSingle","$Username Deleted")
+
+
+
     return  isSuccess
 }
 
 
+fun ManagerCheck(username : String, password : Int ):Boolean{
+
+    var checkTF = true
+
+    db.collection("Accounts/Users/Staff").whereEqualTo("Username", username).whereEqualTo("Password", password).get()
+            .addOnSuccessListener {
+                Log.d("ManagerCheck", "Account Clocked in ")
+
+                checkTF = true
+            }
+            .addOnFailureListener {
+                Log.d("ManagerCheckf", " false Account not there ")
 
 
 
-
-
-
-
-
-
-
-fun ManagerCheck(username : String, password : Int ){
-    val db = FirebaseFirestore.getInstance()
-
-managercheck = true
-
-
+            }
+    Log.d("ManagerCheckf", " $checkTF")
+    return checkTF
+   // return checkTF
 }
 
 
-
+// fix where check acocunt works
 fun checkAccounts(Username: String,Password: Int):Boolean{
-    val db = FirebaseFirestore.getInstance()
     var checkTF = false
-    var SubDataCheck :String = ""
-    repeat(3){
-      var count: Int = 0
-        if (count == 0){
-            SubDataCheck = "WOP"
-        }else if (count == 1){
-            SubDataCheck = "WP"
-        }else if (count == 2){
-            SubDataCheck = "Manager"
-        }
-        db.collection("Accounts/Users/$SubDataCheck").whereEqualTo("Username", Username).whereEqualTo("Password", Password).get()
+
+        db.collection("Accounts/Users/Staff").document(Password.toString()).get()
                 .addOnSuccessListener {
-                    Log.d("Check", "Account Clocked in ")
+
+                    Log.d("Check", "Account Clocked in ${it.toString()}")
+
                     checkTF = true
                 }
                 .addOnFailureListener {
                     Log.d("Check", "Account not there ")
-                    count ++
-                }
+
+
 
     }
 

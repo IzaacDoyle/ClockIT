@@ -3,6 +3,7 @@ package doyle.izaac.clockit.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
@@ -14,11 +15,9 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
 import doyle.izaac.clockit.R
 import doyle.izaac.clockit.ViewModel.AccountViewModel
-import doyle.izaac.clockit.helpers.AccountRecycleAdaptor
-import doyle.izaac.clockit.helpers.SaveDataLocally
+import doyle.izaac.clockit.helpers.*
 
 
-import doyle.izaac.clockit.helpers.showImagePicker
 import doyle.izaac.clockit.main.MainApp
 import doyle.izaac.clockit.models.AccountModel
 import kotlinx.android.synthetic.main.manager_main.*
@@ -29,11 +28,12 @@ class ManagerActionsActivity: AppCompatActivity() {
     lateinit var app: MainApp
     private val IMAGE_REQUEST = 1
     private val CREATE_USER_REQUEST = 2
-    private lateinit var search : MenuItem
-
-
     var accounts = AccountModel()
     private lateinit var viewModel: AccountViewModel
+   // lateinit var search : MenuItem
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,32 +42,38 @@ class ManagerActionsActivity: AppCompatActivity() {
 
 
 
-
-
-
-
         viewModel = ViewModelProviders.of(this).get(AccountViewModel::class.java)
         viewModel.account.observe(this, { it ->
 
-           val  searchview = search.actionView as SearchView?
-            if (searchview != null) {
-                searchview.queryHint = "Search Accounts"
-            }
-
-
             val myAdaptor = AccountRecycleAdaptor(it,applicationContext)
           //  Account_Recycle_View.layoutManager = LinearLayoutManager(applicationContext)
+
             Account_Recycle_View.layoutManager = GridLayoutManager(applicationContext , 2)
             Account_Recycle_View.adapter = myAdaptor
             Account_Recycle_View.adapter!!.notifyDataSetChanged()
 
 
+            if (AccountsUpdated()){
+                viewModel.getAccounts()
+                Account_Recycle_View.adapter!!.notifyDataSetChanged()
+                Updated = false
+            }
 
+
+
+
+
+
+/*
+            val  searchview = viewModel.search?.actionView as SearchView?
+            if (searchview != null) {
+                searchview.queryHint = "Search Accounts"
+            }
 
             searchview!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     if(searchview.isEmpty()){
-                        viewModel.getProducts()
+                        viewModel.getAccounts()
                     }else{
                         if (query.isNullOrBlank()){
                             Toast.makeText(
@@ -75,9 +81,9 @@ class ManagerActionsActivity: AppCompatActivity() {
                                     "Error With Search",
                                     Toast.LENGTH_SHORT
                             ).show()
-                            viewModel.getProducts()
+                            viewModel.getAccounts()
                         }else{
-                            viewModel.SearchProductsName(query.toLowerCase(),"Username","WOP")
+                         //   viewModel.SearchProductsName(query.toLowerCase(),"Username","WOP")
 
                         }
                     }
@@ -86,18 +92,20 @@ class ManagerActionsActivity: AppCompatActivity() {
 
                 override fun onQueryTextChange(newText: String?): Boolean {
                     if (searchview.isEmpty()){
-                        viewModel.getProducts()
+                        viewModel.getAccounts()
                     }else{
                         if (newText.isNullOrBlank()){
-                            viewModel.getProducts()
+                            viewModel.getAccounts()
                         }else{
-                            viewModel.SearchProductsName(newText.toLowerCase(),"Username","WOP")
+                         //   viewModel.SearchProductsName(newText.toLowerCase(),"Username","WOP")
                         }
                     }
                     return true
                 }
 
             })
+
+ */
 
         }  )
 
@@ -117,7 +125,7 @@ class ManagerActionsActivity: AppCompatActivity() {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.menu_manager, menu)
 
-        search = menu?.findItem(R.id.accounts_search)!!
+       // viewModel.search = menu?.findItem(R.id.accounts_search)!!
 
 
         return true
@@ -147,11 +155,20 @@ class ManagerActionsActivity: AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode){
+        when (requestCode) {
             IMAGE_REQUEST -> {
-                if (data != null){
-                    SaveDataLocally(this, data.data.toString(),"HomeImage")
+                if (data != null) {
+                    SaveDataLocally(this, data.data.toString(), "HomeImage")
 
+                }
+            }
+            CREATE_USER_REQUEST -> {
+                if (data != null) {
+                    // viewModel.getAccounts()
+                    Log.d("CREATE_USER_REQUEST","Return data")
+                    Account_Recycle_View.adapter!!.notifyDataSetChanged()
+                }else{
+                    Log.d("CREATE_USER_REQUEST","Return null")
                 }
             }
         }

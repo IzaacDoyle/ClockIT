@@ -4,7 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="20dp">
+    app:cardUseCompatPadding="true"
+    android:paddingLeft="15dp"
+    android:paddingTop="20dp"
+    android:paddingRight="15dp"
+    app:cardCornerRadius="3dp"
+    app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -38,7 +43,7 @@
             android:id="@+id/RV_Role"
             android:layout_width="92dp"
             android:layout_height="17dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="24dp"
             android:text="TextView"
             android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="parent"

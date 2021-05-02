@@ -13,6 +13,7 @@ class AccountViewModel : ViewModel() {
 
     private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private var accounts: MutableLiveData<ArrayList<AccountModel>> = MutableLiveData<ArrayList<AccountModel>>()
+    //public  var search :MenuItem? = null
 
 
 
@@ -20,15 +21,41 @@ class AccountViewModel : ViewModel() {
     init {
         firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
 
-        getProducts()
+
+         getAccounts()
 
     }
 
-    fun getProducts() {
+  public  fun getAccounts() {
         val allAccounts = ArrayList<AccountModel>()
 
+
+        firestore.collection("Accounts/Users/Staff").addSnapshotListener{
+            snapshot, e->
+
+
+
+            if (e != null){
+                Log.d("Account","Failed", e)
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null){
+                val documents =    snapshot.documents
+                documents.forEach{
+                    val account= it.toObject(AccountModel::class.java)
+                    if (account !=null)
+                        allAccounts.add(account)
+                }
+            }
+            accounts.value = allAccounts
+            Log.d("Account","all prod $allAccounts")
+        }
+/*
         firestore.collection("Accounts/Users/WP").addSnapshotListener{
             snapshot, e->
+
+
 
             if (e != null){
                 Log.d("Account","Failed", e)
@@ -85,13 +112,15 @@ class AccountViewModel : ViewModel() {
             Log.d("Account","all prod $allAccounts")
         }
 
+ */
+
 
     }
 
 
-
+/*
     fun SearchProductsName(Username:String, Field:String, Listfrom: String) {
-        var allAccounts :ArrayList<AccountModel> = ArrayList<AccountModel>()
+        var allAccounts  = ArrayList<AccountModel>()
 
 
         firestore.collection("Accounts/Users/$Listfrom").orderBy(Field)
@@ -123,9 +152,8 @@ class AccountViewModel : ViewModel() {
                     //   Log.d("Search", searchAccount.toString())
                     //  Log.d("Search2", accounts.value.toString())
 
-                    if (Username.isEmpty() || Username.isNullOrBlank()) {
-                        getProducts()
-
+                    if (Username.isEmpty() || Username.isBlank()) {
+                        getAccounts()
                     }
 
 
@@ -145,7 +173,7 @@ class AccountViewModel : ViewModel() {
                             Log.d("AccountSearch", it.toString())
                             val sproducts = it.toObject(AccountModel::class.java)
                             if (sproducts != null) {
-                                searchAccount.add(sproducts!!)
+                                searchAccount.add(sproducts)
                                 Log.d("SearchsProd", "$sproducts")
                             } else {
                                 Log.d("ErrorSearchsProd", "$sproducts")
@@ -160,7 +188,7 @@ class AccountViewModel : ViewModel() {
                     //  Log.d("Search2", accounts.value.toString())
 
                     if (Username.isEmpty() || Username.isNullOrBlank()) {
-                        getProducts()
+                        getAccounts()
 
                     }
                 }
@@ -177,7 +205,7 @@ class AccountViewModel : ViewModel() {
                             Log.d("AccountSearch", it.toString())
                             val sproducts = it.toObject(AccountModel::class.java)
                             if (sproducts != null) {
-                                searchAccount.add(sproducts!!)
+                                searchAccount.add(sproducts)
                                 Log.d("SearchsProd", "$sproducts")
                             } else {
                                 Log.d("ErrorSearchsProd", "$sproducts")
@@ -193,7 +221,7 @@ class AccountViewModel : ViewModel() {
                     //  Log.d("Search2", accounts.value.toString())
 
                     if (Username.isEmpty() || Username.isNullOrBlank()) {
-                        getProducts()
+                        getAccounts()
 
                     }
                 }
@@ -201,6 +229,10 @@ class AccountViewModel : ViewModel() {
         Log.d("Accounts", allAccounts.toString())
 
     }
+
+
+ */
+
 
 
 
