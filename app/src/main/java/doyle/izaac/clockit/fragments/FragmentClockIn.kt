@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import doyle.izaac.clockit.Firebase.checkAccounts
 
 import doyle.izaac.clockit.R
 import doyle.izaac.clockit.helpers.Communicator
@@ -30,16 +31,21 @@ class FragmentClockIn : Fragment() {
 
         view.ClB_Button.setOnClickListener {
             val username = CII_Name.text.toString()
-            val password = CII_Password.text.toString().toInt()
-            if (username.isNotEmpty()){
-                if (username.isNotEmpty()){
-                    communicator.passDataCom(username,password)
+            val password = CII_Password.text.toString()
+            if (username.isNotEmpty()) {
+                if (password.isNotEmpty()) {
+                    if (checkAccounts(username, password.toInt())) {
+                        Log.d("Account is not there", "Account is not there")
+                    }else{
 
-                        }
-                     //   communicator.passDataCom(username)
-
+                        communicator.passDataCom(username, password.toInt())
+                        Log.d("Account is there", "Account is there")
+                        CII_Name.text = null
+                        CII_Password.text = null
                     }
                 }
+            }
+        }
 
 
 

@@ -35,10 +35,6 @@ class AccountRecycleAdaptor(private val accounts: ArrayList<AccountModel>, priva
 
 
 
-
-
-
-
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         fun bindAccounts(account: AccountModel){
             Log.d("Username", account.Username)
@@ -51,7 +47,7 @@ class AccountRecycleAdaptor(private val accounts: ArrayList<AccountModel>, priva
 
         init {
 
-
+//allows Each recycler view items to be clickable and this passes data into diolog box to allow data change and deletable
 
             itemView.setOnClickListener { v: View ->
 
@@ -77,28 +73,9 @@ class AccountRecycleAdaptor(private val accounts: ArrayList<AccountModel>, priva
 
                 val Adapter = ArrayAdapter(v.context,android.R.layout.simple_spinner_dropdown_item,v.resources.getStringArray(R.array.RoleSelect))
                 mAlertDialog.Accounts_UPDEL_Role.adapter = Adapter
+                mAlertDialog.Accounts_UPDEL_Role.isEnabled = false
 
-                mAlertDialog.Accounts_UPDEL_Role.onItemSelectedListener = object :
-                        AdapterView.OnItemSelectedListener{
 
-                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                        if (parent != null) {
-                            if (position == 0) {
-                                return
-                            } else {
-                                spinnerText = parent.getItemAtPosition(position).toString()
-                                Log.d("spinner", spinnerText)
-                                if (mAlertDialog.Accounts_UPDEL_Role_Data.text.toString() != spinnerText){
-                                    Log.d("spinnerText","$spinnerText")
-                                    mAlertDialog.Accounts_UPDEL_Role_Data.setText(spinnerText)
-                                }
-
-                            }
-                        }
-                    }
-                    override fun onNothingSelected(parent: AdapterView<*>?) {
-                    }
-                }
 
                 val index = 0
 
@@ -108,9 +85,51 @@ class AccountRecycleAdaptor(private val accounts: ArrayList<AccountModel>, priva
                 mAlertDialog.Account_Edit.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (isChecked) {
                         mAlertDialog.Accounts_UPDEL_Username.isEnabled = true
-                        mAlertDialog.Accounts_UPDEL_Password.isEnabled = true
+                      //  mAlertDialog.Accounts_UPDEL_Password.isEnabled = true
                         mAlertDialog.Accounts_UPDEL_Role.isEnabled = true
                         mAlertDialog.Accounts_UPDEL_Pay.isEnabled = true
+                        // if Editable is active data can be change or deleted
+                        mAlertDialog.Accounts_UPDEL_Role.onItemSelectedListener = object :
+                                AdapterView.OnItemSelectedListener{
+
+                            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                                if (parent != null) {
+                                    if (position == 0) {
+                                        return
+                                    } else {
+                                        spinnerText = parent.getItemAtPosition(position).toString()
+                                        Log.d("spinner", spinnerText)
+                                        if (mAlertDialog.Accounts_UPDEL_Role_Data.text.toString() != spinnerText){
+
+                                            Log.d("spinnerText","$spinnerText")
+                                            mAlertDialog.Accounts_UPDEL_Role_Data.setText( spinnerText)
+                                        }
+
+                                    }
+                                }
+                            }
+                            override fun onNothingSelected(parent: AdapterView<*>?) {
+                            }
+                        }
+                        mAlertDialog.Account_Delete.setOnClickListener {
+                            val username = mAlertDialog.Accounts_UPDEL_Username.text.toString()
+                            val  Password = mAlertDialog.Accounts_UPDEL_Password.text.toString()
+
+                            if (username.isBlank()){
+                                Toast.makeText(mAlertDialog.context,"Username is Invalid Make sure all Information is Entered",Toast.LENGTH_SHORT).show()
+                            }else if (Password.isBlank()){
+                                Toast.makeText(mAlertDialog.context,"Staff Number is Invalid Make sure all Information is Entered",Toast.LENGTH_SHORT).show()
+                            }else if (v.RV_Password.text.toString() !== Password){
+                                if (checkAccounts(username,Password.toInt())) {
+                                    Toast.makeText(mAlertDialog.context,"Staff Number is already in Use Please Enter Unused Staff Number ",Toast.LENGTH_SHORT).show()
+                                }else{
+                                    if (!DeleteUser(username, Password.toInt())){
+                                        Updated = true
+                                        mAlertDialog.cancel()
+                                    }
+                                }
+                            }
+                        }
                     }
                     if (!isChecked){
                         mAlertDialog.Accounts_UPDEL_Username.isEnabled = false
@@ -121,12 +140,12 @@ class AccountRecycleAdaptor(private val accounts: ArrayList<AccountModel>, priva
                 }
 
 
-
+    //Account Update
 
                 mAlertDialog.Accout_update.setOnClickListener  {
 
                     val username = mAlertDialog.Accounts_UPDEL_Username.text.toString()
-                    val Role = mAlertDialog.Accounts_UPDEL_Role_Data.toString()
+                    val Role = mAlertDialog.Accounts_UPDEL_Role_Data.text.toString()
                     val  Password = mAlertDialog.Accounts_UPDEL_Password.text.toString()
                     val Pay  = mAlertDialog.Accounts_UPDEL_Pay.text.toString()
 
@@ -134,41 +153,21 @@ class AccountRecycleAdaptor(private val accounts: ArrayList<AccountModel>, priva
                         Toast.makeText(mAlertDialog.context,"Username is Invalid Make sure all Information is Entered",Toast.LENGTH_SHORT).show()
                     }else if (Password.isBlank()){
                         Toast.makeText(mAlertDialog.context,"Staff Number is Invalid Make sure all Information is Entered",Toast.LENGTH_SHORT).show()
-                    }else if (v.RV_Password.text.toString() !== Password){
+                    }else if (role !== Password){
                         if (checkAccounts(username,Password.toInt())) {
-                            Toast.makeText(mAlertDialog.context,"Staff Number is already in Use Please Enter Unused Staff Number ",Toast.LENGTH_SHORT).show()
-                        }
-                    }else{
-                        if ( !UpdateAccount(username, Password.toInt(), Pay.toDouble(), Role)){
-                            Updated = true
-                            mAlertDialog.cancel()
-
-                        }
-                    }
-
-                }
-
-                mAlertDialog.Account_Delete.setOnClickListener {
-                    val username = mAlertDialog.Accounts_UPDEL_Username.text.toString()
-                    val  Password = mAlertDialog.Accounts_UPDEL_Password.text.toString()
-
-
-
-                    if (username.isBlank()){
-                        Toast.makeText(mAlertDialog.context,"Username is Invalid Make sure all Information is Entered",Toast.LENGTH_SHORT).show()
-                    }else if (Password.isBlank()){
-                        Toast.makeText(mAlertDialog.context,"Staff Number is Invalid Make sure all Information is Entered",Toast.LENGTH_SHORT).show()
-                    }else if (v.RV_Password.text.toString() !== Password){
-                        if (checkAccounts(username,Password.toInt())) {
-                            Toast.makeText(mAlertDialog.context,"Staff Number is already in Use Please Enter Unused Staff Number ",Toast.LENGTH_SHORT).show()
-                        }else{
-                            if (!DeleteUser(username, Password.toInt())){
-                               Updated = true
+                            if (!UpdateAccount(username, Password.toInt(), Pay.toDouble(), Role)){
+                                Updated = true
                                 mAlertDialog.cancel()
+
                             }
                         }
+                    }else{
+                        Toast.makeText(mAlertDialog.context,"Staff Number is already in Use Please Enter Unused Staff Number ",Toast.LENGTH_SHORT).show()
                     }
+
                 }
+
+
 
             }
 

@@ -14,22 +14,30 @@ import kotlin.coroutines.coroutineContext
 
 
 var managercheck : Boolean = false
+var checkTF :Boolean = false
 private val db = FirebaseFirestore.getInstance()
+var PayeeStatus : String = ""
 
 fun CreateUser(context: Context, Username: String, Password : Int,Pay : Double,Role: String):Boolean {
 
     var exists: Boolean = false
+    if (Pay == 0.0){
+         PayeeStatus  = "WithOutPay"
+    }else{
+        PayeeStatus = "WithPay"
+    }
 
-    var user = hashMapOf(
+    val user = hashMapOf(
 
             "Username" to Username.toLowerCase(),
             "Password" to Password,
             "Role" to Role,
-            "Pay" to Pay
+            "Pay" to Pay,
+            "PayStatus" to PayeeStatus
 
     )
 
-    if (!checkAccounts(Username, Password)) {
+    if (checkAccounts(Username, Password)) {
         db.collection("Accounts/Users/Staff").document(Password.toString()).set(user)
                 .addOnSuccessListener {
                     Log.d(
@@ -100,26 +108,37 @@ fun CreateUser(context: Context, Username: String, Password : Int,Pay : Double,R
 fun UpdateAccount(Username: String, Password : Int,Pay : Double,Role: String):Boolean{
 
     var isSuccess : Boolean = false
+    var PayStatus = ""
 
     val map = mutableMapOf<String, Any>()
 
     if (Username.isNotEmpty()){
         map["Username"] = Username
     }
-    if(Password.toString().isNotEmpty()){
-        map["Password"] = Password
+   /* if(Password.toString().isNotEmpty()){
+        map["Password"] = Password.toInt()
+        Log.d("MapPassword", Password.toString())
     }
+        */
     if (Role.isNotEmpty()){
 
         map["Role"] = Role
     }
     if (Pay.toString().isNotEmpty()){
         map["Pay"] = Pay
+        if (Pay > 0){
+            PayStatus = "WithPay"
+        }else{
+            PayStatus = "WithOutPay"
+        }
+    }
+    if (PayStatus.isNotEmpty()){
+        map["PayStatus"] = PayStatus
     }
     Log.d("Map", map.toString())
 
 
-    db.collection("Accounts/Users/Staff").document(Password.toString()).set(map)
+    db.collection("Accounts/Users/Staff").document(Password.toString()).update(map)
         .addOnSuccessListener {
             // account.delete()
             isSuccess = true
@@ -169,14 +188,15 @@ fun ManagerCheck(username : String, password : Int ):Boolean{
 
 // fix where check acocunt works
 fun checkAccounts(Username: String,Password: Int):Boolean{
-    var checkTF = false
-
         db.collection("Accounts/Users/Staff").document(Password.toString()).get()
                 .addOnSuccessListener {
+                    if (it["Password"] != Password) {
+                        checkTF = true
 
-                    Log.d("Check", "Account Clocked in ${it.toString()}")
+                        Log.d("Check", "Account is there $checkTF  ${it.toString()}")
 
-                    checkTF = true
+
+                    }
                 }
                 .addOnFailureListener {
                     Log.d("Check", "Account not there ")
@@ -185,6 +205,6 @@ fun checkAccounts(Username: String,Password: Int):Boolean{
 
     }
 
-
+Log.d("checktf","if false no Account if True Accout there $checkTF")
     return checkTF
 }

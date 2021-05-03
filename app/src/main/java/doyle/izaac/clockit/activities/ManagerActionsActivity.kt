@@ -176,7 +176,8 @@ class ManagerActionsActivity: AppCompatActivity() {
 
     override fun onBackPressed() {
         val resultIntent = Intent()
-        setResult(Activity.RESULT_OK)
+        resultIntent.putExtra("Image","ReadImage")
+        setResult(Activity.RESULT_OK,resultIntent)
         finishActivity(RESULT_OK)
         
         super.onBackPressed()

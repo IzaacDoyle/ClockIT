@@ -11,6 +11,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import doyle.izaac.clockit.Firebase.CreateUser
+import doyle.izaac.clockit.Firebase.checkAccounts
 import doyle.izaac.clockit.R
 import doyle.izaac.clockit.main.MainApp
 import doyle.izaac.clockit.models.AccountModel
@@ -65,24 +66,27 @@ class CreateNewUser: AppCompatActivity() {
             accounts.Password = New_Staff_Num.text.toString().toInt()
             accounts.Role = spinnerText.toString()
             accounts.Pay = New_Pay.text.toString().toDouble()
+            Log.d("Check", accounts.Password.toString())
+
             if (accounts.Username.isBlank()) {
                 toast("Please Enter Username")
-            } else if (accounts.Password.toString().isBlank()) {
+            }else if (accounts.Password.toString().isBlank()) {
                 toast("Please Enter Staff ID")
-            } else if (accounts.Role.isBlank()) {
-                toast("Please Select staff Role ${accounts.Role}")
-            } else if (accounts.Pay.toString().isBlank()) {
-                accounts.Pay = 0.0
-                app.account.Create(applicationContext,accounts.copy())
-
-                startActivityForResult(intentFor<ManagerActionsActivity>(),MANGER_RESULT)
-
-            //    val intent = Intent(this, ManagerActionsActivity::class.java)
-              //  startActivity(intent)
-
-            } else {
-                app.account.Create(applicationContext,accounts.copy())
-                startActivityForResult(intentFor<ManagerActionsActivity>(),MANGER_RESULT)
+            }else if (checkAccounts(accounts.Username,accounts.Password)) {
+                if (accounts.Role.isBlank()) {
+                    toast("Please Select staff Role ${accounts.Role}")
+                } else if (accounts.Pay.toString().isBlank()) {
+                    accounts.Pay = 0.0
+                    app.account.Create(applicationContext, accounts.copy())
+                    startActivityForResult(intentFor<ManagerActionsActivity>(), MANGER_RESULT)
+                    finish()
+                } else {
+                    app.account.Create(applicationContext, accounts.copy())
+                    startActivityForResult(intentFor<ManagerActionsActivity>(), MANGER_RESULT)
+                    finish()
+                }
+            }else{
+                toast("Staff Number already in use")
             }
         }
 

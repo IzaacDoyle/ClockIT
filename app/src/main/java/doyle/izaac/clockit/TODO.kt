@@ -6,6 +6,10 @@ Save Account ClockIN or ClockOut stats to Username in firebase with Clock in tim
     finish RecyclerView to display Clocked Accounts
 
 
+     Save data isnt beoing passed form Mdialog to Update correctly
+
+
+
 
 
 

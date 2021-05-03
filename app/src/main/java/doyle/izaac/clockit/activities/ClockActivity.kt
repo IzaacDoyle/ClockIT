@@ -32,6 +32,7 @@ import kotlinx.android.synthetic.main.fragment_clock_out.*
 import kotlinx.android.synthetic.main.manager_screen_login.*
 import org.jetbrains.anko.find
 import org.jetbrains.anko.intentFor
+import kotlin.math.log
 
 
 class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Communicator
@@ -49,7 +50,7 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
 
 
-
+//gesture controls so swipe features are detectable
   lateinit var gestureDetector: GestureDetector
     var x2:Float = 0.0f
     var x1:Float = 0.0f
@@ -64,6 +65,7 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         if (savedInstanceState != null){
             ft.beginTransaction().replace(R.id.fragment_Container, mainFragment,"Main").commit()
         }
@@ -73,12 +75,11 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
         val bitmap = readDataLocally(this, "HomeImage")
         Log.d("bitmapCA",bitmap)
-
-
         ManagerScreen_Image.setImageBitmap(readImageFromPath(this,bitmap))
 
 
 
+        // hides Manager actions in plain sight but button has timer and a click amout before login is available
         ManagerScreen_Image.setOnClickListener {
             buttonClicks++
             if (buttonClicks == 1 || buttonClicks ==2 || buttonClicks == 3 || buttonClicks == 4){
@@ -137,6 +138,7 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
         }
 
+
     gestureDetector = GestureDetector(this,this)
         ft.addOnBackStackChangedListener {
 
@@ -146,6 +148,8 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
 
     }
+
+     // each controls a set direction or gestureDetector movement
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
@@ -216,6 +220,7 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
     }
 
 
+     // sets fragment view on gesture
 
     private fun FragmentView(fragment: Fragment, Swipe: String){
         val ft = ft.beginTransaction()
@@ -231,9 +236,25 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
         ft.replace(R.id.fragment_Container, fragment).commit()
     }
 
+     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+         super.onActivityResult(requestCode, resultCode, data)
+         when (requestCode) {
+             MANGER_RESULT -> {
+                 if (data != null){
+                     val ImageRead = data.extras?.getString("Image")
+                     if (ImageRead == "ReadImage"){
+                         val bitmap = readDataLocally(this, "HomeImage")
+                         Log.d("bitmapCA",bitmap)
+                         ManagerScreen_Image.setImageBitmap(readImageFromPath(this,bitmap))
+                     }
+                 }
+             }
+         }
+     }
 
 
 
+    // helps pass data between fragments
     override fun passDataCom(Username: String,Password:Int) {
 
 
@@ -241,6 +262,8 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
         bundle.putString("Username",Username)
         bundle.putInt("Password",Password)
+
+        Log.d("comm", bundle.toString())
 
 
 

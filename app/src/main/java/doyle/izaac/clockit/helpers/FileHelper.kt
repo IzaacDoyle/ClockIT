@@ -6,7 +6,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import java.io.*
 
-
+//saves Image loction route to Internal file so that image can be changed and always displays
 
 fun SaveDataLocally(context: Context,ImageBitmap :String, FileName: String){
 

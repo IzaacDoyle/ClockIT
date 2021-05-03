@@ -10,10 +10,14 @@
         android:id="@+id/ManagerScreen_Image"
         android:layout_width="0dp"
         android:layout_height="193dp"
+        android:backgroundTint="#FFFFFF"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+
         app:srcCompat="@android:drawable/ic_menu_manage" />
 
     <fragment
