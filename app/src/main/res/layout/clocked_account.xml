@@ -4,13 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="10dp">
+    android:paddingLeft="20dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="20dp"
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:paddingLeft="20dp"
+
         android:paddingTop="10dp"
+        android:paddingEnd="20dp"
         android:paddingBottom="10dp"
         android:textAlignment="center">
 
@@ -19,14 +25,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/clocked_Clockedstat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textAlignment="center" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

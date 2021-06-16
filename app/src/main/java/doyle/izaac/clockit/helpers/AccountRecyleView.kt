@@ -14,7 +14,9 @@ import androidx.core.view.size
 import androidx.recyclerview.widget.RecyclerView
 import doyle.izaac.clockit.Firebase.DeleteUser
 import doyle.izaac.clockit.Firebase.UpdateAccount
-import doyle.izaac.clockit.Firebase.checkAccounts
+import doyle.izaac.clockit.Firebase.checkAccount
+
+import doyle.izaac.clockit.Firebase.checkTF
 import doyle.izaac.clockit.R
 import doyle.izaac.clockit.ViewModel.AccountViewModel
 import doyle.izaac.clockit.activities.ManagerActionsActivity
@@ -114,21 +116,10 @@ class AccountRecycleAdaptor(private val accounts: ArrayList<AccountModel>, priva
                         mAlertDialog.Account_Delete.setOnClickListener {
                             val username = mAlertDialog.Accounts_UPDEL_Username.text.toString()
                             val  Password = mAlertDialog.Accounts_UPDEL_Password.text.toString()
-
-                            if (username.isBlank()){
-                                Toast.makeText(mAlertDialog.context,"Username is Invalid Make sure all Information is Entered",Toast.LENGTH_SHORT).show()
-                            }else if (Password.isBlank()){
-                                Toast.makeText(mAlertDialog.context,"Staff Number is Invalid Make sure all Information is Entered",Toast.LENGTH_SHORT).show()
-                            }else if (v.RV_Password.text.toString() !== Password){
-                                if (checkAccounts(username,Password.toInt())) {
-                                    Toast.makeText(mAlertDialog.context,"Staff Number is already in Use Please Enter Unused Staff Number ",Toast.LENGTH_SHORT).show()
-                                }else{
                                     if (!DeleteUser(username, Password.toInt())){
                                         Updated = true
                                         mAlertDialog.cancel()
                                     }
-                                }
-                            }
                         }
                     }
                     if (!isChecked){
@@ -154,7 +145,9 @@ class AccountRecycleAdaptor(private val accounts: ArrayList<AccountModel>, priva
                     }else if (Password.isBlank()){
                         Toast.makeText(mAlertDialog.context,"Staff Number is Invalid Make sure all Information is Entered",Toast.LENGTH_SHORT).show()
                     }else if (role !== Password){
-                        if (checkAccounts(username,Password.toInt())) {
+                        checkAccount(username,Password.toInt(),Role,pay.toDouble())
+                        //if (checkAccounts(username,Password.toInt())) {
+                        if (checkTF) {
                             if (!UpdateAccount(username, Password.toInt(), Pay.toDouble(), Role)){
                                 Updated = true
                                 mAlertDialog.cancel()

@@ -3,9 +3,10 @@ package doyle.izaac.clockit.models
 import android.content.Context
 import android.util.Log
 import doyle.izaac.clockit.Firebase.CreateUser
+import doyle.izaac.clockit.Firebase.DeleteUser
 import doyle.izaac.clockit.Firebase.UpdateAccount
 import doyle.izaac.clockit.activities.CreateNewUser
-import org.jetbrains.anko.info
+
 
 class AccountMemStore: AccountStore {
     val Accounts = ArrayList<AccountModel>()
@@ -22,8 +23,8 @@ class AccountMemStore: AccountStore {
         logAll()
     }
 
-    override fun Delete() {
-      //  DeleteUser()
+    override fun Delete(account: AccountModel) {
+        DeleteUser(account.Username, account.Password)
         TODO("Not yet implemented")
     }
 

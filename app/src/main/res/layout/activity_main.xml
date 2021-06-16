@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#CAC9C9"
     tools:context=".activities.ClockActivity">
 
     <ImageButton
         android:id="@+id/ManagerScreen_Image"
         android:layout_width="0dp"
         android:layout_height="193dp"
-        android:backgroundTint="#FFFFFF"
         android:adjustViewBounds="true"
+        android:backgroundTint="#FFFFFF"
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -20,27 +21,15 @@
 
         app:srcCompat="@android:drawable/ic_menu_manage" />
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_Container"
         android:name="doyle.izaac.clockit.fragments.MainFragment"
         android:layout_width="0dp"
-        android:layout_height="458dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="TODO"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ManagerScreen_Image" />
 

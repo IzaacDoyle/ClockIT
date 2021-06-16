@@ -51,7 +51,8 @@ fun readImageFromPath(context: Context, path : String) : Bitmap? {
             bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor)
             parcelFileDescriptor?.close()
         } catch (e: Exception) {
-            Toast.makeText(context,"Image Save is unavalble please re-set image",Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,"Image Read is unavailable please reload ${e.message}",Toast.LENGTH_SHORT).show()
+            Log.d("ImageE"," ${e.message}")
         }
     }
     Log.d("RIp", bitmap.toString())

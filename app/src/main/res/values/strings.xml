@@ -12,4 +12,11 @@
         <item>Supervisor</item>
         <item>Manager</item>
     </string-array>
+
+    <string name="Instructions">"
+          Swipe Right To Clock In
+          Swipe Left To Clock Out
+         Swipe Down To Return"</string>
+
+
 </resources>

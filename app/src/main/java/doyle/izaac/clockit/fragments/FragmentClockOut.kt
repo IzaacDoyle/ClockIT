@@ -1,12 +1,14 @@
 package doyle.izaac.clockit.fragments
 
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import doyle.izaac.clockit.Firebase.checkAccounts
+import doyle.izaac.clockit.Firebase.ClockInAdd
+
 
 import doyle.izaac.clockit.R
 import doyle.izaac.clockit.helpers.Communicator
@@ -36,8 +38,14 @@ class FragmentClockOut : Fragment() {
             val username = CIO_Name.text.toString()
             val password = CIO_Password.text.toString()
 
-            if (username.isNotEmpty()){
-                if (password.isNotEmpty()){
+            if (username.isNotEmpty()) {
+                if (password.isNotEmpty()) {
+                    val time = SystemClock.currentThreadTimeMillis()
+                    ClockInAdd(view.context,username,password.toInt(), time, false)
+                    communicator.passDataCom(username, password.toInt())
+                    CIO_Name.text = null
+                    CIO_Password.text = null
+                    /*
                    if(checkAccounts(username,password.toInt())){
                        Log.d("Account is not there", "Account is not there")
 
@@ -49,6 +57,9 @@ class FragmentClockOut : Fragment() {
                    }
                 }
 
+                     */
+
+                }
             }
 
         }

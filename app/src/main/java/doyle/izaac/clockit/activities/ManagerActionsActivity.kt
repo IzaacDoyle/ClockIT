@@ -1,18 +1,23 @@
 package doyle.izaac.clockit.activities
 
 import android.app.Activity
+import android.app.SearchManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
+
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+
 import androidx.core.view.isEmpty
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.GridLayoutManager
+import doyle.izaac.clockit.Firebase.UploadImageFB
 import doyle.izaac.clockit.R
 import doyle.izaac.clockit.ViewModel.AccountViewModel
 import doyle.izaac.clockit.helpers.*
@@ -28,9 +33,11 @@ class ManagerActionsActivity: AppCompatActivity() {
     lateinit var app: MainApp
     private val IMAGE_REQUEST = 1
     private val CREATE_USER_REQUEST = 2
+    private val Email_Request = 3
     var accounts = AccountModel()
     private lateinit var viewModel: AccountViewModel
-   // lateinit var search : MenuItem
+    //lateinit var search : MenuItem
+
 
 
 
@@ -42,79 +49,36 @@ class ManagerActionsActivity: AppCompatActivity() {
 
 
 
+
+       // searchview.queryHint = "Search Accounts"
+
+
+
         viewModel = ViewModelProviders.of(this).get(AccountViewModel::class.java)
         viewModel.account.observe(this, { it ->
 
-            val myAdaptor = AccountRecycleAdaptor(it,applicationContext)
-          //  Account_Recycle_View.layoutManager = LinearLayoutManager(applicationContext)
+            val myAdaptor = AccountRecycleAdaptor(it, applicationContext)
+            //  Account_Recycle_View.layoutManager = LinearLayoutManager(applicationContext)
 
-            Account_Recycle_View.layoutManager = GridLayoutManager(applicationContext , 2)
+            Account_Recycle_View.layoutManager = GridLayoutManager(applicationContext, 2)
             Account_Recycle_View.adapter = myAdaptor
             Account_Recycle_View.adapter!!.notifyDataSetChanged()
 
 
-            if (AccountsUpdated()){
+            if (AccountsUpdated()) {
                 viewModel.getAccounts()
                 Account_Recycle_View.adapter!!.notifyDataSetChanged()
                 Updated = false
             }
 
 
-
-
-
-
-/*
-            val  searchview = viewModel.search?.actionView as SearchView?
-            if (searchview != null) {
-                searchview.queryHint = "Search Accounts"
+            SwipetoRefeshAccounts.setOnRefreshListener {
+                viewModel.getAccounts()
+                Account_Recycle_View.adapter!!.notifyDataSetChanged()
+                SwipetoRefeshAccounts.isRefreshing = false
             }
 
-            searchview!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    if(searchview.isEmpty()){
-                        viewModel.getAccounts()
-                    }else{
-                        if (query.isNullOrBlank()){
-                            Toast.makeText(
-                                    applicationContext,
-                                    "Error With Search",
-                                    Toast.LENGTH_SHORT
-                            ).show()
-                            viewModel.getAccounts()
-                        }else{
-                         //   viewModel.SearchProductsName(query.toLowerCase(),"Username","WOP")
-
-                        }
-                    }
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    if (searchview.isEmpty()){
-                        viewModel.getAccounts()
-                    }else{
-                        if (newText.isNullOrBlank()){
-                            viewModel.getAccounts()
-                        }else{
-                         //   viewModel.SearchProductsName(newText.toLowerCase(),"Username","WOP")
-                        }
-                    }
-                    return true
-                }
-
-            })
-
- */
-
-        }  )
-
-        // TODO Add to Menu so Search account Selection for WOP, WP, Manager
-
-
-
-
-
+        })
 
 
     }
@@ -124,8 +88,46 @@ class ManagerActionsActivity: AppCompatActivity() {
 
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.menu_manager, menu)
+        val manager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val search = menu?.findItem(R.id.accounts_search)!!
+        val searchview : SearchView = search.actionView as SearchView
 
-       // viewModel.search = menu?.findItem(R.id.accounts_search)!!
+
+        searchview!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if(searchview.isEmpty()){
+                    viewModel.getAccounts()
+                }else{
+                    if (query.isNullOrBlank()){
+                        Toast.makeText(
+                            applicationContext,
+                            "Error With Search",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        viewModel.getAccounts()
+                    }else{
+                           viewModel.SearchAcconts(query.toLowerCase())
+
+                    }
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (searchview.isEmpty()){
+                    viewModel.getAccounts()
+                }else{
+                    if (newText.isNullOrBlank()){
+                        viewModel.getAccounts()
+                    }else{
+                           viewModel.SearchAcconts(newText.toLowerCase())
+                    }
+                }
+                return true
+            }
+
+        })
+
 
 
         return true
@@ -146,6 +148,8 @@ class ManagerActionsActivity: AppCompatActivity() {
 
         }
         R.id.Manager_Email_Data -> {
+         //   startActivityForResult(intentFor<EmailActivity>(),Email_Request)
+        //    finish()
 
         }
 
@@ -158,7 +162,10 @@ class ManagerActionsActivity: AppCompatActivity() {
         when (requestCode) {
             IMAGE_REQUEST -> {
                 if (data != null) {
-                    SaveDataLocally(this, data.data.toString(), "HomeImage")
+                    UploadImageFB(data.data!!)
+                   // SaveDataLocally(this, data.data.toString(), "HomeImage")
+                  //  SaveDataSharedPref(this,data.data.toString())
+                    Log.d("SaveData",data.data.toString())
 
                 }
             }

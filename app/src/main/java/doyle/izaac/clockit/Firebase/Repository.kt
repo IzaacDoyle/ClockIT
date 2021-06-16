@@ -1,22 +1,36 @@
 package doyle.izaac.clockit.Firebase
 
+
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.auth.User
-import doyle.izaac.clockit.activities.ManagerActionsActivity
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import doyle.izaac.clockit.models.AccountModel
-import doyle.izaac.clockit.models.ClockInModel
-import doyle.izaac.clockit.models.ClockedAccounts
-import kotlinx.android.synthetic.main.new_user_create.*
-import kotlin.coroutines.coroutineContext
+import java.io.File
+import java.net.URI
+import java.time.LocalDate
 
 
 var managercheck : Boolean = false
-var checkTF :Boolean = false
+var bitmap: Bitmap? = null
+
+public var accountscheck = ArrayList<AccountModel>()
+
 private val db = FirebaseFirestore.getInstance()
 var PayeeStatus : String = ""
+public var checkTF :Boolean = false
+lateinit var info :String
+
+
+
+
+
+
 
 fun CreateUser(context: Context, Username: String, Password : Int,Pay : Double,Role: String):Boolean {
 
@@ -37,73 +51,21 @@ fun CreateUser(context: Context, Username: String, Password : Int,Pay : Double,R
 
     )
 
-    if (checkAccounts(Username, Password)) {
+
         db.collection("Accounts/Users/Staff").document(Password.toString()).set(user)
                 .addOnSuccessListener {
                     Log.d(
                             "created account ",
                             "Account created with name of ${Username}"
                     )
+                    exists = true
                 }
 
-    }else{
-        exists = true
-    }
-    return exists
-    }
 
-
-/*
-
-       if (Role == "Manager") {
-
-           db.collection("Accounts/Users/Manager").document(Password.toString()).get().addOnSuccessListener {
-
-               Toast.makeText(context, "$Username with Staff Number $Password already Exists", Toast.LENGTH_SHORT).show()
-
-           }.addOnFailureListener {
-               db.collection("Accounts/Users/Manager").document(Password.toString()).set(user)
-                       .addOnSuccessListener {
-                           Log.d(
-                                   "created account with Pay",
-                                   "Account created with name of ${Username}"
-                           )
-                       }
-           }
-
-
-       } else if (Pay == 0.0) {
-           db.collection("Accounts/Users/WOP").document(Password.toString()).get().addOnSuccessListener {
-               Toast.makeText(context, "$Username with Staff Number $Password already Exists", Toast.LENGTH_SHORT).show()
-           }.addOnFailureListener {
-               db.collection("Accounts/Users/WOP").document(Password.toString()).set(user)
-                       .addOnSuccessListener {
-                           Log.d(
-                                   "created account without Pay",
-                                   "Account created with name of ${Username}"
-                           )
-                       }
-           }
-       } else {
-           db.collection("Accounts/Users/WP").document(Password.toString()).get().addOnSuccessListener {
-               Toast.makeText(context, "$Username with Staff Number $Password already Exists", Toast.LENGTH_SHORT).show()
-           }.addOnFailureListener {
-               db.collection("Accounts/Users/WP").document(Password.toString()).set(user)
-                       .addOnSuccessListener {
-                           Log.d(
-                                   "created account with Pay",
-                                   "Account created with name of ${Username}"
-                           )
-                       }
-           }
-       }
-   }else{
-       exists = true
-   }
     return exists
 
+    }
 
- */
 
 fun UpdateAccount(Username: String, Password : Int,Pay : Double,Role: String):Boolean{
 
@@ -187,24 +149,106 @@ fun ManagerCheck(username : String, password : Int ):Boolean{
 
 
 // fix where check acocunt works
-fun checkAccounts(Username: String,Password: Int):Boolean{
-        db.collection("Accounts/Users/Staff").document(Password.toString()).get()
-                .addOnSuccessListener {
-                    if (it["Password"] != Password) {
-                        checkTF = true
-
-                        Log.d("Check", "Account is there $checkTF  ${it.toString()}")
-
-
-                    }
-                }
-                .addOnFailureListener {
-                    Log.d("Check", "Account not there ")
+/*
+fun checkAccounts(Username: String,Password: Int,Role: String,Pay: Double):String {
+    info = "false"
+    checkTF = !accountscheck.contains(AccountModel(Username, Password, Pay, Role))
+    Log.d("accountcheck", accountscheck.toString() )
+return info
+}
 
 
+ */
+fun checkAccount(Username: String,Password: Int,Role: String,Pay: Double):Boolean{
+    var check = false
 
+   val account = db.collection("Accounts/Users/Staff").document(Password.toString()).get()
+
+        .addOnSuccessListener { doc ->
+            if (!doc.exists()){
+                check = true
+                Log.d("CAccount",doc.toString())
+            }
+            if (doc.exists()){
+                Log.d("CAccount",doc.toString())
+            }
+        }.isSuccessful
+
+
+
+    if (account){
+        check = true
     }
 
-Log.d("checktf","if false no Account if True Accout there $checkTF")
-    return checkTF
+
+    return check
 }
+
+
+fun ClockInAdd(context: Context,Username: String,Password: Int, Time: Long, ClockedIn :Boolean){
+
+   val Account = db.collection("Accounts/Users/Staff").document(Password.toString())
+    var timeIn: Long? =null
+    var timeOut: Long? = null
+    var data = LocalDate.now()
+
+    val map = mutableMapOf<String, Any>()
+    Account.get().addOnSuccessListener { doc ->
+        if (doc.exists()) {
+            var clockedin = doc.get("ClockedInTime")
+            if (ClockedIn) {
+                if (clockedin.toString().isBlank()) {
+                    Toast.makeText(context, "Account Already clocked In", Toast.LENGTH_SHORT).show()
+                } else {
+                    timeIn = Time
+                    val clocked = hashMapOf(
+                            "Username" to Username,
+                            "ClockedInTime" to timeIn,
+                            "ClockedOutTime" to timeOut,
+                            "clocked" to ClockedIn,
+                            "Date" to data.toString()
+                    )
+                    //${Password.toString()}/${data.toString()}
+                    db.collection("Accounts/Users/Clocked").document(Username).set(clocked)
+                            .addOnSuccessListener {
+                                Log.d("clocked","added")
+                            }
+                }
+            } else {
+                timeOut = Time
+                map["ClockedOutTime"] = timeOut!!
+                map["clocked"] = ClockedIn
+                db.collection("Accounts/Users/Clocked").document(Username).update(map)
+                        .addOnSuccessListener {
+                            Log.d("clocked","added")
+                        }
+            }
+        }
+
+
+        }
+    }
+
+fun UploadImageFB(FilePath:Uri) {
+    val storageRef: StorageReference = FirebaseStorage.getInstance().reference.child("Image/MainScreenImage.jpg")
+
+    storageRef.putFile(FilePath)
+}
+
+fun GetImageFB(): Bitmap?{
+    val storageRef: StorageReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://clockit-127a2.appspot.com/Image/MainScreenImage.jpg")
+    val localfile = File.createTempFile("MainScreenImage","jpg")
+
+     storageRef.getFile(localfile).addOnSuccessListener {
+          bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
+     }
+         .addOnFailureListener{
+             bitmap = null
+         }
+
+return bitmap
+
+}
+
+
+

@@ -7,10 +7,17 @@ import android.view.*
 import android.widget.Adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainer
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.dynamic.SupportFragmentWrapper
 import com.google.common.io.LineReader
 import doyle.izaac.clockit.R
+import doyle.izaac.clockit.ViewModel.AccountViewModel
+import doyle.izaac.clockit.ViewModel.ClockedViewModel
 import doyle.izaac.clockit.activities.ClockActivity
 import doyle.izaac.clockit.helpers.AccountRecycleAdaptor
 import doyle.izaac.clockit.helpers.ClockInRecycleView
@@ -30,14 +37,26 @@ create timetable function - auto determin hours and pay
 
 
  */
+
+
+
 open class MainFragment : Fragment(){
+
+    private lateinit var viewModel:ClockedViewModel
 
 
 
     private var inputText: String? = ""
 
+
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+
 
 
     }
@@ -49,18 +68,36 @@ open class MainFragment : Fragment(){
 
 
 
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_main, container, false)
 
+
         inputText = arguments?.getString("Username")
+
 
       //  val myAdaptor = ClockInRecycleView(,requireContext())
 
+        viewModel = ViewModelProviders.of(this).get(ClockedViewModel::class.java)
+        viewModel.account.observe(viewLifecycleOwner, { it ->
+
+            val myAdaptor = ClockInRecycleView(it,view.context)
+            clocked_Accounts.layoutManager = LinearLayoutManager(view.context)
+            clocked_Accounts.adapter = myAdaptor
+            clocked_Accounts.adapter!!.notifyDataSetChanged()
+        }
+        )
+
+
+
+
 
         return view
+
+
 
 
     }
@@ -68,3 +105,4 @@ open class MainFragment : Fragment(){
 
 
 }
+

@@ -1,5 +1,7 @@
 package doyle.izaac.clockit.models
 
+import java.util.*
+
 class ClockMemStore: ClockStore {
 
     val clockin = ArrayList<ClockInModel>()
@@ -14,6 +16,6 @@ class ClockMemStore: ClockStore {
     }
 
     override fun Delete() {
-        TODO("Not yet implemented")
+
     }
 }

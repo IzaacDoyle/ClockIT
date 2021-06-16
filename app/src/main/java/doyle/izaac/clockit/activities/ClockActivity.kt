@@ -1,51 +1,47 @@
 package doyle.izaac.clockit.activities
 
-import android.app.ActivityManager
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.*
-import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import com.google.firebase.firestore.auth.User
+import doyle.izaac.clockit.Firebase.GetImageFB
 import doyle.izaac.clockit.Firebase.ManagerCheck
-import doyle.izaac.clockit.Firebase.managercheck
 import doyle.izaac.clockit.R
 import doyle.izaac.clockit.fragments.FragmentClockIn
 import doyle.izaac.clockit.fragments.FragmentClockOut
 import doyle.izaac.clockit.fragments.MainFragment
 import doyle.izaac.clockit.helpers.Communicator
+import doyle.izaac.clockit.helpers.ReadDataSharedPref
 import doyle.izaac.clockit.helpers.readDataLocally
-
-import doyle.izaac.clockit.helpers.readImage
 import doyle.izaac.clockit.helpers.readImageFromPath
 import doyle.izaac.clockit.main.MainApp
 import doyle.izaac.clockit.models.ClockInModel
-import doyle.izaac.clockit.models.ClockedAccounts
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_clock_in.*
 import kotlinx.android.synthetic.main.fragment_clock_out.*
 import kotlinx.android.synthetic.main.manager_screen_login.*
-import org.jetbrains.anko.find
 import org.jetbrains.anko.intentFor
-import kotlin.math.log
+import org.jetbrains.anko.toast
 
 
 class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Communicator
  {
+
     lateinit var app: MainApp
     var clockin = ClockInModel()
     val mainFragment = MainFragment()
     val FragClockIn = FragmentClockIn()
     val FragmentClockOut = FragmentClockOut()
-    val ft = supportFragmentManager
+
+
     var buttonClicks = 0
      val MANGER_RESULT = 3
-
+     public val ft = supportFragmentManager
     var timerActive: Boolean = false
 
 
@@ -65,19 +61,51 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         if (savedInstanceState != null){
             ft.beginTransaction().replace(R.id.fragment_Container, mainFragment,"Main").commit()
         }
 
+        //Intent.ACTION_OPEN_DOCUMENT
+
+
+
+
+
+
         setContentView(R.layout.activity_main)
+       // ManagerScreen_Image.setImageBitmap(readImageFromPath(this,readDataLocally(this, "HomeImage")))
         app = application as MainApp
 
-        val bitmap = readDataLocally(this, "HomeImage")
-        Log.d("bitmapCA",bitmap)
-        ManagerScreen_Image.setImageBitmap(readImageFromPath(this,bitmap))
+       /* if (ReadDataSharedPref(this) == null){
+            ManagerScreen_Image.setImageBitmap(null)
+        }else {
+            ManagerScreen_Image.setImageBitmap(readImageFromPath(this, ReadDataSharedPref(this)!!))
+        }
+
+       // ManagerScreen_Image.setImageBitmap(readImageFromPath(this, ))
+
+        //ManagerScreen_Image.setImageBitmap(BitmapFactory.decodeFile(readDataLocally(this, "HomeImage")))
 
 
+
+
+       // val bitmap = readDataLocally(this, "HomeImage")
+       // Log.d("bitmapCA",bitmap)
+        Image_reload.setOnClickListener {
+            val bitmap = readDataLocally(this, "HomeImage")
+            Log.d("bitmapCA", bitmap)
+            ManagerScreen_Image.setImageBitmap(readImageFromPath(this, bitmap))
+        }
+       // ManagerScreen_Image.setImageBitmap(readImageFromPath(this,
+       //     intent.getStringExtra("ImageSource").toString()!!
+       // ))
+       // Log.d("Image", intent.getStringExtra("ImageSource")!!)
+
+
+        */
+
+        ManagerScreen_Image.setImageBitmap(GetImageFB())
+        Log.d("ImageOnline", GetImageFB().toString())
 
         // hides Manager actions in plain sight but button has timer and a click amout before login is available
         ManagerScreen_Image.setOnClickListener {
@@ -121,6 +149,7 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
                         Log.d("manager", "UserPasswordError + $manager_mu")
                 }else {
                         if (ManagerCheck(manager_mu, manager_mp.toInt())){
+
                             startActivityForResult(intentFor<ManagerActionsActivity>(),MANGER_RESULT)
                             mAlertDialog.cancel()
                         }
@@ -222,19 +251,7 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
      // sets fragment view on gesture
 
-    private fun FragmentView(fragment: Fragment, Swipe: String){
-        val ft = ft.beginTransaction()
 
-        if (Swipe=="Right"){
-            ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right)
-            ft.addToBackStack("right")
-        }else if (Swipe == "Left"){
-            ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
-            ft.addToBackStack("left")
-        }
-
-        ft.replace(R.id.fragment_Container, fragment).commit()
-    }
 
      override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
          super.onActivityResult(requestCode, resultCode, data)
@@ -265,8 +282,6 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
         Log.d("comm", bundle.toString())
 
-
-
         val transaction = this.supportFragmentManager.beginTransaction()
         mainFragment.arguments = bundle
 
@@ -277,7 +292,19 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
         }
 
 
+     public fun FragmentView(fragment: Fragment, Swipe: String){
+         val ft = ft.beginTransaction()
 
+         if (Swipe=="Right"){
+             ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right)
+             ft.addToBackStack("right")
+         }else if (Swipe == "Left"){
+             ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+             ft.addToBackStack("left")
+         }
+
+         ft.replace(R.id.fragment_Container, fragment).commit()
+     }
 
 
 
