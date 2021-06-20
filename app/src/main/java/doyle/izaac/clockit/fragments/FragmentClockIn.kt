@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import doyle.izaac.clockit.Firebase.ClockInAdd
 
@@ -38,10 +39,19 @@ class FragmentClockIn : Fragment() {
             if (username.isNotEmpty()) {
                 if (password.isNotEmpty()) {
                     val time = SystemClock.currentThreadTimeMillis()
-                    ClockInAdd(view.context,username,password.toInt(),time,true)
-                    communicator.passDataCom(username, password.toInt())
-                    CII_Name.text = null
-                    CII_Password.text =null
+
+                   ClockInAdd(view.context,username,password.toInt(),time,true)
+
+                        communicator.passDataCom(username, password.toInt())
+                        CII_Name.text = null
+                        CII_Password.text = null
+                    /*
+                    else{
+                        Toast.makeText(context, "Username or Password is incorrect", Toast.LENGTH_SHORT).show()
+                        CII_Password.text = null
+                    }
+
+                     */
                 }
                   /*
                     if (checkAccounts(username, password.toInt())) {

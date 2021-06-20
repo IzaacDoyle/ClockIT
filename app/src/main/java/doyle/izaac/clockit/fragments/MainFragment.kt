@@ -88,6 +88,7 @@ open class MainFragment : Fragment(){
             clocked_Accounts.layoutManager = LinearLayoutManager(view.context)
             clocked_Accounts.adapter = myAdaptor
             clocked_Accounts.adapter!!.notifyDataSetChanged()
+            clocked_Accounts.scrollToPosition(0)
         }
         )
 

@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import doyle.izaac.clockit.Firebase.CreateUser
 import doyle.izaac.clockit.Firebase.checkAccount
 import doyle.izaac.clockit.Firebase.checkTF
+import doyle.izaac.clockit.Firebase.check
 import doyle.izaac.clockit.Firebase.info
 import doyle.izaac.clockit.R
 import doyle.izaac.clockit.main.MainApp
@@ -25,12 +26,14 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 
 
+
 class CreateNewUser: AppCompatActivity() {
     var accounts = AccountModel()
     lateinit var app: MainApp
     var spinnerText : String = ""
     val MANGER_RESULT = 3
    var accountcreat :Boolean = false
+
 
 
 
@@ -82,35 +85,8 @@ class CreateNewUser: AppCompatActivity() {
             if ( New_Username.text.toString().isBlank() || New_Staff_Num.text.toString().isBlank()){
                 toast("Enter All Fields of Data")
             }else {
-                if (checkAccount(accounts.Username!!, accounts.Password!!, accounts.Role!!, accounts.Pay!!)){
-                    if (accounts.Username.isBlank()) {
-                        toast("Please Enter Username")
-                    } else if (accounts.Password.toString().isBlank()) {
-                        toast("Please Enter Staff ID")
-                    } else
-                        if (accounts.Role.isBlank()) {
-                            toast("Please Select staff Role ${accounts.Role}")
-                        } else if (accounts.Pay.toString().isBlank()) {
-
-                            accounts.Pay = 0.0
-                            app.account.Create(applicationContext, accounts.copy())
-                            startActivityForResult(intentFor<ManagerActionsActivity>(), MANGER_RESULT)
-                            finish()
-                        } else {
-                            app.account.Create(applicationContext, accounts.copy())
-                            startActivityForResult(intentFor<ManagerActionsActivity>(), MANGER_RESULT)
-                            finish()
-                        }
-
-                }else{
-                    toast("Staff Number already in use")
-                }
-
-                //toast("Waiting For Data")
-                Log.d("accountC", "should work")
-               /* when (checkTF) {
-                    true -> {
-
+                checkAccount(accounts.Username!!, accounts.Password!!, accounts.Role!!, accounts.Pay!!)
+                    if (check) {
                         if (accounts.Username.isBlank()) {
                             toast("Please Enter Username")
                         } else if (accounts.Password.toString().isBlank()) {
@@ -122,24 +98,31 @@ class CreateNewUser: AppCompatActivity() {
 
                                 accounts.Pay = 0.0
                                 app.account.Create(applicationContext, accounts.copy())
-                                startActivityForResult(intentFor<ManagerActionsActivity>(), MANGER_RESULT)
+                                startActivityForResult(
+                                    intentFor<ManagerActionsActivity>(),
+                                    MANGER_RESULT
+                                )
+                                check = false
                                 finish()
                             } else {
                                 app.account.Create(applicationContext, accounts.copy())
-                                startActivityForResult(intentFor<ManagerActionsActivity>(), MANGER_RESULT)
+                                startActivityForResult(
+                                    intentFor<ManagerActionsActivity>(),
+                                    MANGER_RESULT
+                                )
+                                check = false
                                 finish()
                             }
 
-
-
-                    }
-                    else -> {
+                    } else {
                         toast("Staff Number already in use")
-
-
+                        check = false
                     }
 
-                */
+
+                //toast("Waiting For Data")
+                Log.d("accountC", "should work")
+
                 }
 
 

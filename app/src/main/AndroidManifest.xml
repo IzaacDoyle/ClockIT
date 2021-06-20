@@ -15,9 +15,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:name=".main.MainApp"
-        android:theme="@style/Theme.ClockIT">
+        android:theme="@style/Theme.ClockIT"
+        >
 
         <activity android:name=".activities.StartUpActivity"
+            android:screenOrientation="portrait"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,17 +29,21 @@
         </activity>
 
 
-        <activity android:name=".activities.ClockActivity">
+        <activity android:name=".activities.ClockActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            android:screenOrientation="portrait">
 
         </activity>
 
         <activity android:name=".activities.ManagerActionsActivity"
             android:theme="@style/Theme.AppCompat.Light"
+            android:screenOrientation="portrait"
             >
 
         </activity>
 
-        <activity android:name=".activities.CreateNewUser">
+        <activity android:name=".activities.CreateNewUser"
+            android:screenOrientation="portrait">
 
         </activity>
     </application>

@@ -65,7 +65,7 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
             ft.beginTransaction().replace(R.id.fragment_Container, mainFragment,"Main").commit()
         }
 
-        //Intent.ACTION_OPEN_DOCUMENT
+
 
 
 
@@ -76,33 +76,6 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
        // ManagerScreen_Image.setImageBitmap(readImageFromPath(this,readDataLocally(this, "HomeImage")))
         app = application as MainApp
 
-       /* if (ReadDataSharedPref(this) == null){
-            ManagerScreen_Image.setImageBitmap(null)
-        }else {
-            ManagerScreen_Image.setImageBitmap(readImageFromPath(this, ReadDataSharedPref(this)!!))
-        }
-
-       // ManagerScreen_Image.setImageBitmap(readImageFromPath(this, ))
-
-        //ManagerScreen_Image.setImageBitmap(BitmapFactory.decodeFile(readDataLocally(this, "HomeImage")))
-
-
-
-
-       // val bitmap = readDataLocally(this, "HomeImage")
-       // Log.d("bitmapCA",bitmap)
-        Image_reload.setOnClickListener {
-            val bitmap = readDataLocally(this, "HomeImage")
-            Log.d("bitmapCA", bitmap)
-            ManagerScreen_Image.setImageBitmap(readImageFromPath(this, bitmap))
-        }
-       // ManagerScreen_Image.setImageBitmap(readImageFromPath(this,
-       //     intent.getStringExtra("ImageSource").toString()!!
-       // ))
-       // Log.d("Image", intent.getStringExtra("ImageSource")!!)
-
-
-        */
 
         ManagerScreen_Image.setImageBitmap(GetImageFB())
         Log.d("ImageOnline", GetImageFB().toString())
@@ -152,6 +125,7 @@ class ClockActivity: AppCompatActivity(), GestureDetector.OnGestureListener, Com
 
                             startActivityForResult(intentFor<ManagerActionsActivity>(),MANGER_RESULT)
                             mAlertDialog.cancel()
+
                         }
                     }
 
